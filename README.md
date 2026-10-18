@@ -2,6 +2,18 @@
 
 在浏览器本地把静态建筑 GLB 转为 Minecraft Java 26.3 的 Sponge Schematic v2。模型无需上传，支持完整方块、上下半砖和楼梯。
 
+## 实际效果
+
+完整方块、半砖和楼梯共同还原柱体缝隙、镂空结构、平台台阶、斜向裂缝和植被起伏等复杂表面。以下为导入 Minecraft 后的游戏内截图。
+
+<table>
+  <tr>
+    <td width="33.33%"><img src="docs/images/column-detail.png" alt="柱体的密集横向缝隙、镂空结构与植被起伏" width="100%"></td>
+    <td width="33.33%"><img src="docs/images/platform-detail.png" alt="圆台表面的台阶、凹槽与半格层次" width="100%"></td>
+    <td width="33.33%"><img src="docs/images/crack-detail.png" alt="斜向裂缝边缘的楼梯形状与凹陷层次" width="100%"></td>
+  </tr>
+</table>
+
 ## 使用
 
 1. 从 Blender 导出 GLB 2.0：选择需要的建筑部件，嵌入资源，关闭 Draco 几何压缩。
