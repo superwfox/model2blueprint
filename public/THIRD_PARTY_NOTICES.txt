@@ -27,3 +27,13 @@ extracted from vanilla Minecraft Java Edition 26.3. Minecraft is a trademark of
 Mojang Studios / Microsoft. Original textures and client JARs are not distributed.
 Block state property metadata was obtained from Mojang's generated reports as
 published by https://github.com/misode/mcmeta (26.3-summary).
+
+Bundled preview textures
+
+Pixel Perfection Legacy 26.3-97.1, original artwork by Hugh "XSSheep" Rutland,
+continued by Nova_Wostra and contributors. Texture derivatives are distributed
+under CC BY-SA 4.0. Attribution, source links, the original pack notice and the
+atlas transformation details are provided in textures/NOTICE.txt and
+textures/original-pack-notice.txt. The code's Three.js license remains separate.
+https://modrinth.com/resourcepack/pixel-perfection-legacy
+https://creativecommons.org/licenses/by-sa/4.0/

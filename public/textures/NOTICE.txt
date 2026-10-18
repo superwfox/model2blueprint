@@ -1,0 +1,6 @@
+Pixel Perfection Legacy 26.3-97.1
+Original art: Hugh "XSSheep" Rutland. Continued by Nova_Wostra and contributors.
+https://modrinth.com/resourcepack/pixel-perfection-legacy
+https://github.com/NovaWostra/Pixel-Perfection-Chorus-Eddit
+CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/
+Only required block textures are included. Atlas modifications: first animation frame, nearest 16px sampling, baked foliage tints, atlas packing. Texture derivatives retain CC BY-SA 4.0.

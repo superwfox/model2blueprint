@@ -21,7 +21,7 @@ const schem = await gzipSchem(result, families);
 await writeFile(output, schem);
 const root = readNbt(gunzipSync(schem)), cells = readVarInts(root.value.BlockData);
 const inverse = new Map<number, string>(Object.entries(root.value.Palette).map(([k, v]) => [v as number, k]));
-let air = 0, bottom = 0, top = 0, full = 0, stairs = 0;
+let air = 0, bottom = 0, top = 0, full = 0, stairs = 0, shelves = 0;
 cells.forEach((id, i) => {
   const state = inverse.get(id);
   if (!state) throw new Error(`Missing palette entry at ${i}`);
@@ -29,8 +29,16 @@ cells.forEach((id, i) => {
   else if (state.includes('type=bottom')) bottom++;
   else if (state.includes('type=top')) top++;
   else if (state.includes('_stairs[')) stairs++;
+  else if (state.includes('_shelf[')) shelves++;
   else full++;
   let shape = state === 'minecraft:air' ? 0 : state.includes('type=bottom') ? 1 : state.includes('type=top') ? 2 : 3;
+  if (state.includes('_shelf[')) {
+    const properties = Object.fromEntries(state.slice(state.indexOf('[') + 1, -1).split(',').map(entry => entry.split('=')));
+    const facing = ['north', 'east', 'south', 'west'].indexOf(properties.facing);
+    if (facing < 0 || properties.powered !== 'false' || properties.side_chain !== 'unconnected' || properties.waterlogged !== 'false') throw new Error(`Invalid shelf state ${state}`);
+    shape = 44 + facing;
+    if (!state.startsWith(`${families[result.materials[i]].shelf}[`)) throw new Error(`Shelf material mismatch at ${i}`);
+  }
   if (state.includes('_stairs[')) {
     const properties = Object.fromEntries(state.slice(state.indexOf('[') + 1, -1).split(',').map(entry => entry.split('=')));
     const facing = ['north', 'east', 'south', 'west'].indexOf(properties.facing);
@@ -43,9 +51,9 @@ cells.forEach((id, i) => {
   if (shape === 3 && state !== families[result.materials[i]].full) throw new Error(`Full block material mismatch at ${i}`);
   if ((shape === 1 || shape === 2) && !state.startsWith(`${families[result.materials[i]].slab}[`)) throw new Error(`Slab material mismatch at ${i}`);
 });
-const report = { source: input, size: result.size, stats: result.stats, independentlyDecoded: { air, bottom, top, full, stairs },
+const report = { source: input, size: result.size, stats: result.stats, independentlyDecoded: { air, bottom, top, full, stairs, shelves },
   outputBytes: schem.length, previewTriangles: surface.positions.length / 9,
-  palette: families.map((f, i) => ({ material: model.materials[i].name, family: f.id, full: f.full, slab: f.slab, stairs: f.stairs })),
+  palette: families.map((f, i) => ({ material: model.materials[i].name, family: f.id, full: f.full, slab: f.slab, stairs: f.stairs, shelf: f.shelf })),
   axiomImport: 'Not verified in the game; requires Minecraft 26.3 + Axiom import.' };
 await writeFile(`${output}.report.json`, JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2)); disposeModel(scene);

@@ -123,7 +123,7 @@ test('Sponge v2 gzip round-trips independently with air, upper slabs and XYZ ind
 test('multi-byte palette varints work beyond 127 states', () => {
   const count = 260, families = Array.from({ length: count }, (_, i) => ({ ...FAMILIES[0], full: `minecraft:test_${i}` }));
   const result: VoxelResult = { size: { width: count, height: 1, length: 1, scale: 1 }, shapes: new Uint8Array(count).fill(3),
-    materials: Uint16Array.from({ length: count }, (_, i) => i), stats: { full: count, bottom: 0, top: 0, stairs: 0, solids: 0, milliseconds: 0 } };
+    materials: Uint16Array.from({ length: count }, (_, i) => i), stats: { full: count, bottom: 0, top: 0, stairs: 0, shelves: 0, solids: 0, milliseconds: 0 } };
   const nbt = readNbt(encodeSchem(result, families)).value;
   assert.equal(nbt.PaletteMax, count + 1);
   assert.deepEqual(readVarInts(nbt.BlockData), Array.from({ length: count }, (_, i) => i + 1));

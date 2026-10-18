@@ -1,4 +1,4 @@
-import { BoxGeometry, InstancedBufferAttribute, InstancedBufferGeometry, Mesh, MeshStandardMaterial } from 'three';
+import { BoxGeometry, InstancedBufferAttribute, InstancedBufferGeometry, InstancedInterleavedBuffer, InterleavedBufferAttribute, Mesh, MeshStandardMaterial } from 'three';
 import type { FallingData } from './types.ts';
 
 export class FallingAnimation {
@@ -6,7 +6,7 @@ export class FallingAnimation {
   readonly duration = 3.6;
   private time = { value: 0 };
 
-  constructor(data: FallingData, height: number) {
+  constructor(data: FallingData, height: number, texturedMaterial?: MeshStandardMaterial) {
     const box = new BoxGeometry(1, 1, 1), geometry = new InstancedBufferGeometry();
     geometry.setIndex(box.index);
     for (const name of ['position', 'normal', 'uv']) geometry.setAttribute(name, box.getAttribute(name));
@@ -14,9 +14,16 @@ export class FallingAnimation {
     geometry.setAttribute('aBlockSize', new InstancedBufferAttribute(data.sizes, 3));
     geometry.setAttribute('aBlockAnchor', new InstancedBufferAttribute(data.anchors, 3));
     geometry.setAttribute('color', new InstancedBufferAttribute(data.colors, 3));
+    if (data.textures) {
+      const tiles = new InstancedInterleavedBuffer(data.textures, 6);
+      geometry.setAttribute('aTilesA', new InterleavedBufferAttribute(tiles, 3, 0));
+      geometry.setAttribute('aTilesB', new InterleavedBufferAttribute(tiles, 3, 3));
+    }
     geometry.instanceCount = data.centers.length / 3;
-    const material = new MeshStandardMaterial({ vertexColors: true, roughness: 0.92, metalness: 0 });
-    material.onBeforeCompile = shader => {
+    const material = texturedMaterial ?? new MeshStandardMaterial({ vertexColors: true, roughness: 0.92, metalness: 0 });
+    const textureShader = material.onBeforeCompile.bind(material);
+    material.onBeforeCompile = (shader, renderer) => {
+      textureShader(shader, renderer);
       shader.uniforms.uDropTime = this.time;
       shader.uniforms.uModelHeight = { value: Math.max(1, height) };
       shader.uniforms.uDropDistance = { value: Math.max(8, Math.min(36, height * 0.18)) };

@@ -6,14 +6,14 @@ import { voxelize } from '../src/voxelize.ts';
 import { meshSurface } from '../src/surface.ts';
 import { fallingBlocks } from '../src/falling-data.ts';
 import { encodeSchem } from '../src/schem.ts';
-import { BLOCK_SHAPES, SHAPE_MASKS } from '../src/block-shapes.ts';
+import { BLOCK_SHAPES, SHELF_START, SHAPE_MASKS } from '../src/block-shapes.ts';
 import { FAMILIES } from '../src/palette.ts';
 import { readNbt, readVarInts } from './nbt-reader.ts';
 import type { VoxelResult } from '../src/types.ts';
 
 function fixture(shapes: number[]): VoxelResult {
   return { size: { width: shapes.length, height: 1, length: 1, scale: 1 }, shapes: Uint8Array.from(shapes),
-    materials: new Uint16Array(shapes.length), stats: { full: 0, bottom: 0, top: 0, stairs: 0, solids: 0, milliseconds: 0 } };
+    materials: new Uint16Array(shapes.length), stats: { full: 0, bottom: 0, top: 0, stairs: 0, shelves: 0, solids: 0, milliseconds: 0 } };
 }
 
 test('all eight straight stairs point their tall side toward the exported facing', () => {
@@ -52,7 +52,7 @@ test('a diagonal floor opening stays open and its rim can use stairs', () => {
 });
 
 test('every stair preview has the exact volume and outward normals of its occupied subcells', () => {
-  for (let shape = 4; shape < BLOCK_SHAPES.length; shape++) {
+  for (let shape = 4; shape < SHELF_START; shape++) {
     const { positions, normals } = meshSurface(fixture([shape]), [[125, 125, 125]]);
     let volume = 0;
     for (let i = 0; i < positions.length; i += 9) {

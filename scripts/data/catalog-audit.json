@@ -1,5 +1,8 @@
 {
   "version": "26.3",
+  "functionalExceptions": [
+    "empty *_shelf"
+  ],
   "creativeTabs": {
     "建筑方块": [
       "oak_log",
@@ -1898,6 +1901,21 @@
       "white_wool_stairs",
       "yellow_concrete_stairs",
       "yellow_wool_stairs"
+    ],
+    "shelf": [
+      "acacia_shelf",
+      "bamboo_shelf",
+      "birch_shelf",
+      "cherry_shelf",
+      "crimson_shelf",
+      "dark_oak_shelf",
+      "jungle_shelf",
+      "mangrove_shelf",
+      "oak_shelf",
+      "pale_oak_shelf",
+      "poplar_shelf",
+      "spruce_shelf",
+      "warped_shelf"
     ]
   },
   "excluded": [
@@ -1928,10 +1946,6 @@
     {
       "id": "acacia_sapling",
       "reason": "other-shape"
-    },
-    {
-      "id": "acacia_shelf",
-      "reason": "outside-building-colored-natural"
     },
     {
       "id": "acacia_sign",
@@ -2022,10 +2036,6 @@
       "reason": "outside-building-colored-natural"
     },
     {
-      "id": "bamboo_shelf",
-      "reason": "outside-building-colored-natural"
-    },
-    {
       "id": "bamboo_sign",
       "reason": "outside-building-colored-natural"
     },
@@ -2104,10 +2114,6 @@
     {
       "id": "birch_sapling",
       "reason": "other-shape"
-    },
-    {
-      "id": "birch_shelf",
-      "reason": "outside-building-colored-natural"
     },
     {
       "id": "birch_sign",
@@ -2370,10 +2376,6 @@
       "reason": "other-shape"
     },
     {
-      "id": "cherry_shelf",
-      "reason": "outside-building-colored-natural"
-    },
-    {
       "id": "cherry_sign",
       "reason": "outside-building-colored-natural"
     },
@@ -2546,10 +2548,6 @@
       "reason": "other-shape"
     },
     {
-      "id": "crimson_shelf",
-      "reason": "outside-building-colored-natural"
-    },
-    {
       "id": "crimson_sign",
       "reason": "outside-building-colored-natural"
     },
@@ -2632,10 +2630,6 @@
     {
       "id": "dark_oak_sapling",
       "reason": "other-shape"
-    },
-    {
-      "id": "dark_oak_shelf",
-      "reason": "outside-building-colored-natural"
     },
     {
       "id": "dark_oak_sign",
@@ -3074,10 +3068,6 @@
       "reason": "other-shape"
     },
     {
-      "id": "jungle_shelf",
-      "reason": "outside-building-colored-natural"
-    },
-    {
       "id": "jungle_sign",
       "reason": "outside-building-colored-natural"
     },
@@ -3330,10 +3320,6 @@
       "reason": "other-shape"
     },
     {
-      "id": "mangrove_shelf",
-      "reason": "outside-building-colored-natural"
-    },
-    {
       "id": "mangrove_sign",
       "reason": "outside-building-colored-natural"
     },
@@ -3432,10 +3418,6 @@
     {
       "id": "oak_sapling",
       "reason": "other-shape"
-    },
-    {
-      "id": "oak_shelf",
-      "reason": "outside-building-colored-natural"
     },
     {
       "id": "oak_sign",
@@ -3572,10 +3554,6 @@
     {
       "id": "pale_oak_sapling",
       "reason": "other-shape"
-    },
-    {
-      "id": "pale_oak_shelf",
-      "reason": "outside-building-colored-natural"
     },
     {
       "id": "pale_oak_sign",
@@ -3732,10 +3710,6 @@
     {
       "id": "poplar_sapling",
       "reason": "other-shape"
-    },
-    {
-      "id": "poplar_shelf",
-      "reason": "outside-building-colored-natural"
     },
     {
       "id": "poplar_sign",
@@ -4206,10 +4180,6 @@
       "reason": "other-shape"
     },
     {
-      "id": "spruce_shelf",
-      "reason": "outside-building-colored-natural"
-    },
-    {
       "id": "spruce_sign",
       "reason": "outside-building-colored-natural"
     },
@@ -4424,10 +4394,6 @@
     {
       "id": "warped_roots",
       "reason": "other-shape"
-    },
-    {
-      "id": "warped_shelf",
-      "reason": "outside-building-colored-natural"
     },
     {
       "id": "warped_sign",

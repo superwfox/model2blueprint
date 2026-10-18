@@ -5,8 +5,10 @@ export interface SourceMaterial {
   color: Vec3;
 }
 
-export interface BlockOption { id: string; label: string; color: Vec3; group: string; state?: string; slab?: string; stairs?: string; auto?: boolean }
-export type MaterialColors = Vec3 | { full: Vec3; slab: Vec3; stairs: Vec3 };
+export interface BlockOption { id: string; label: string; color: Vec3; group: string; state?: string; slab?: string; stairs?: string; shelf?: string; auto?: boolean }
+export type MaterialColors = Vec3 | { full: Vec3; slab: Vec3; stairs: Vec3; shelf?: Vec3 };
+export type FaceTiles = [number, number, number, number, number, number];
+export interface MaterialTextures { full: FaceTiles; slab: FaceTiles; stairs: FaceTiles; shelf: FaceTiles }
 
 export interface MeshPart {
   name: string;
@@ -27,12 +29,12 @@ export interface GridSize { width: number; height: number; length: number; scale
 export interface Triangle { a: Vec3; b: Vec3; c: Vec3; material: number }
 export interface Solid { name: string; triangles: Triangle[] }
 
-// 0 air, 1 bottom slab, 2 top slab, 3 full block; 4–43 oriented stairs (block-shapes.ts).
+// 0 air, 1 bottom slab, 2 top slab, 3 full block; 4–43 stairs; 44–47 shelves.
 export interface VoxelResult {
   size: GridSize;
   shapes: Uint8Array;
   materials: Uint16Array;
-  stats: { full: number; bottom: number; top: number; stairs: number; solids: number; milliseconds: number };
+  stats: { full: number; bottom: number; top: number; stairs: number; shelves: number; solids: number; milliseconds: number };
 }
 
 export interface BlockFamily {
@@ -41,19 +43,21 @@ export interface BlockFamily {
   full: string;
   slab: string;
   stairs: string;
+  shelf: string;
   group: string;
   color: Vec3;
   slabColor?: Vec3;
   stairsColor?: Vec3;
+  shelfColor?: Vec3;
 }
 
-export interface SurfaceData { positions: Float32Array; normals: Float32Array; colors: Float32Array; warning?: string }
-export interface FallingData { centers: Float32Array; sizes: Float32Array; anchors: Float32Array; colors: Float32Array }
+export interface SurfaceData { positions: Float32Array; normals: Float32Array; colors: Float32Array; textures?: Float32Array; warning?: string }
+export interface FallingData { centers: Float32Array; sizes: Float32Array; anchors: Float32Array; colors: Float32Array; textures?: Float32Array }
 export interface ConversionOutput { result: VoxelResult; surface: SurfaceData; falling?: FallingData }
 
 export type WorkerRequest =
-  | { type: 'convert'; model: ModelData; horizontalSize: number; colors: MaterialColors[]; animate?: boolean }
-  | { type: 'remesh'; result: VoxelResult; colors: MaterialColors[] }
+  | { type: 'convert'; model: ModelData; horizontalSize: number; colors: MaterialColors[]; textures?: MaterialTextures[]; animate?: boolean }
+  | { type: 'remesh'; result: VoxelResult; colors: MaterialColors[]; textures?: MaterialTextures[] }
   | { type: 'export'; result: VoxelResult; families: BlockFamily[] };
 
 export type WorkerReply =

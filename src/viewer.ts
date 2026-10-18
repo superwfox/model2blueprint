@@ -5,6 +5,7 @@ import {
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { disposeModel } from './glb.ts';
 import { FallingAnimation } from './falling-view.ts';
+import { BlockTextures } from './texture-material.ts';
 import type { FallingData, GridSize, ModelData, SurfaceData } from './types.ts';
 
 export class Viewer {
@@ -19,9 +20,13 @@ export class Viewer {
   private mode: 'original' | 'result' = 'original';
   private observer: ResizeObserver;
   private frame = 0;
-  private dropStart = 0;
+  private dropStart?: number;
+  private dropElapsed = 0;
+  private dropReady = false;
   private falling?: FallingAnimation;
   private steady?: Mesh<BufferGeometry, MeshStandardMaterial>;
+  private textures = new BlockTextures();
+  private updateZoomSpeed = (event: WheelEvent | PointerEvent): void => { this.controls.zoomSpeed = event.shiftKey ? 1 : 3; };
 
   constructor(container: HTMLElement) {
     this.renderer = new WebGLRenderer({ antialias: true, alpha: false });
@@ -30,8 +35,12 @@ export class Viewer {
     this.renderer.toneMappingExposure = 1.15;
     this.renderer.setClearColor('#141c23');
     container.append(this.renderer.domElement);
-    this.renderer.domElement.setAttribute('aria-label', '建筑三维预览，可拖动旋转、滚轮缩放');
+    this.renderer.domElement.setAttribute('aria-label', '建筑三维预览，可拖动旋转、滚轮缩放，按住 Shift 精细缩放');
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.zoomSpeed = 3;
+    this.renderer.domElement.addEventListener('wheel', this.updateZoomSpeed, { capture: true, passive: true });
+    this.renderer.domElement.addEventListener('pointerdown', this.updateZoomSpeed, true);
+    this.renderer.domElement.addEventListener('pointermove', this.updateZoomSpeed, true);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.09;
     this.scene.add(this.original, this.converted);
@@ -45,9 +54,15 @@ export class Viewer {
     this.observer.observe(container);
     const tick = () => {
       this.frame = requestAnimationFrame(tick);
-      if (this.falling?.update((performance.now() - this.dropStart) / 1000)) {
-        this.converted.remove(this.falling.mesh); this.falling.dispose(); this.falling = undefined;
-        if (this.steady) this.steady.visible = true;
+      if (this.falling && this.dropReady) {
+        const now = performance.now(), dt = Math.min(0.05, (now - (this.dropStart ?? now)) / 1000);
+        this.dropStart = now;
+        // Count visible frames so a slow first render cannot consume the whole reveal.
+        if (!document.hidden && this.mode === 'result') this.dropElapsed += dt;
+        if (this.falling.update(this.dropElapsed)) {
+          this.converted.remove(this.falling.mesh); this.falling.dispose(); this.falling = undefined;
+          if (this.steady) this.steady.visible = true;
+        }
       }
       this.controls.update(); this.renderer.render(this.scene, this.camera);
     };
@@ -77,15 +92,18 @@ export class Viewer {
     geometry.setAttribute('position', new BufferAttribute(surface.positions, 3));
     geometry.setAttribute('normal', new BufferAttribute(surface.normals, 3));
     geometry.setAttribute('color', new BufferAttribute(surface.colors, 3));
+    if (surface.textures) geometry.setAttribute('aTexture', new BufferAttribute(surface.textures, 3));
     geometry.computeBoundingSphere();
-    const material = new MeshStandardMaterial({ color: new Color('white'), vertexColors: true, roughness: 0.92, metalness: 0 });
+    const material = surface.textures ? this.textures.material() : new MeshStandardMaterial({ color: new Color('white'), vertexColors: true, roughness: 0.92, metalness: 0 });
     this.steady = new Mesh(geometry, material); this.converted.add(this.steady);
     if (falling && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      this.falling = new FallingAnimation(falling, this.size?.height ?? 1);
-      this.steady.visible = false; this.converted.add(this.falling.mesh); this.dropStart = performance.now();
+      this.falling = new FallingAnimation(falling, this.size?.height ?? 1, falling.textures ? this.textures.material(true) : undefined);
+      this.steady.visible = false; this.converted.add(this.falling.mesh);
     }
     this.setMode('result');
   }
+
+  startResultAnimation(): void { this.dropReady = true; }
 
   setMode(mode: 'original' | 'result'): void {
     this.mode = mode; this.original.visible = mode === 'original'; this.converted.visible = mode === 'result';
@@ -104,12 +122,16 @@ export class Viewer {
   }
 
   clearResult(): void {
+    this.dropStart = undefined; this.dropElapsed = 0; this.dropReady = false;
     this.falling = undefined; this.steady = undefined;
     this.converted.traverse(o => { if (o instanceof Mesh) { o.geometry.dispose(); (o.material as MeshStandardMaterial).dispose(); } }); this.converted.clear();
   }
   private clearOriginal(): void { disposeModel(this.original); this.original.clear(); }
   dispose(): void {
+    this.renderer.domElement.removeEventListener('wheel', this.updateZoomSpeed, true);
+    this.renderer.domElement.removeEventListener('pointerdown', this.updateZoomSpeed, true);
+    this.renderer.domElement.removeEventListener('pointermove', this.updateZoomSpeed, true);
     cancelAnimationFrame(this.frame); this.observer.disconnect(); this.controls.dispose(); this.clearOriginal(); this.clearResult();
-    this.grid?.geometry.dispose(); (this.grid?.material as import('three').Material | undefined)?.dispose(); this.renderer.dispose();
+    this.grid?.geometry.dispose(); (this.grid?.material as import('three').Material | undefined)?.dispose(); this.textures.dispose(); this.renderer.dispose();
   }
 }

@@ -181,9 +181,10 @@ def main():
             if weight <= 0 or unmapped: return None, occupancy
             return [round(c / weight) for c in rgb], occupancy
 
-        catalog, excluded = {'full': [], 'slab': [], 'stairs': []}, []
+        catalog, excluded = {'full': [], 'slab': [], 'stairs': [], 'shelf': []}, []
         for name, (properties, defaults) in registry.items():
-            kind = 'slab' if 'slab' in name and 'type' in properties else 'stairs' if name.endswith('_stairs') else 'full'
+            # Empty shelves are the explicitly requested exception to the functional-block exclusion.
+            kind = 'shelf' if name.endswith('_shelf') else 'slab' if 'slab' in name and 'type' in properties else 'stairs' if name.endswith('_stairs') else 'full'
             if is_functional(name):
                 excluded.append({'id': name, 'reason': 'functional'}); continue
             if kind == 'full' and name not in source_tabs:
@@ -222,7 +223,7 @@ def main():
         target = ROOT / 'src' / 'data' / 'block-catalog.json'
         target.parent.mkdir(exist_ok=True)
         target.write_text(json.dumps(result, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')
-        audit = {'version': '26.3', 'creativeTabs': tab_items, 'supported': {kind: [item['id'] for item in items] for kind, items in catalog.items()}, 'excluded': excluded}
+        audit = {'version': '26.3', 'functionalExceptions': ['empty *_shelf'], 'creativeTabs': tab_items, 'supported': {kind: [item['id'] for item in items] for kind, items in catalog.items()}, 'excluded': excluded}
         (DATA / 'catalog-audit.json').write_text(json.dumps(audit, ensure_ascii=False, indent=2), encoding='utf-8')
         print(json.dumps({kind: len(items) for kind, items in catalog.items()}))
         print('Functional tab overlap:', [item['id'] for item in catalog['full'] if item['id'] in tab_items['功能方块']])

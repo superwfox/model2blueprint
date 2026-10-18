@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import registry from '../scripts/data/minecraft-26.3-blocks.json' with { type: 'json' };
-import { FAMILIES, FULL_BLOCKS, SLABS, STAIRS, suggestFamily } from '../src/palette.ts';
+import { FAMILIES, FULL_BLOCKS, SLABS, STAIRS, SHELVES, suggestFamily } from '../src/palette.ts';
+import { BLOCK_SHAPES } from '../src/block-shapes.ts';
 import { familyColors } from '../src/colors.ts';
 import { encodeSchem } from '../src/schem.ts';
 import { meshSurface } from '../src/surface.ts';
@@ -12,7 +13,7 @@ import type { MaterialColors, VoxelResult } from '../src/types.ts';
 const states = registry as unknown as Record<string, [Record<string, string[]>, Record<string, string>]>;
 function grid(shapes: number[], materials = new Uint16Array(shapes.length)): VoxelResult {
   return { size: { width: shapes.length, length: 1, height: 1, scale: 1 }, shapes: Uint8Array.from(shapes), materials,
-    stats: { full: 0, bottom: 0, top: 0, stairs: 0, solids: 0, milliseconds: 0 } };
+    stats: { full: 0, bottom: 0, top: 0, stairs: 0, shelves: 0, solids: 0, milliseconds: 0 } };
 }
 
 test('catalog covers building colors, wood, foliage, glass, ore, copper families and all real slab/stair IDs', () => {
@@ -25,6 +26,7 @@ test('catalog covers building colors, wood, foliage, glass, ore, copper families
   const expectedStairs = Object.keys(states).filter(id => id.endsWith('_stairs')).sort();
   assert.deepEqual(SLABS.map(block => block.id).sort(), expectedSlabs);
   assert.deepEqual(STAIRS.map(block => block.id).sort(), expectedStairs);
+  assert.deepEqual(SHELVES.map(block => block.id).sort(), Object.keys(states).filter(id => id.endsWith('_shelf')).sort());
   assert.equal(full.size, FULL_BLOCKS.length);
 });
 
@@ -46,8 +48,8 @@ test('all 16 wool and concrete colors have genuine matching full/slab/stair mapp
 });
 
 test('every exported state of every material is legal in the independently generated 26.3 registry', () => {
-  const shapes = FAMILIES.flatMap(() => Array.from({ length: 44 }, (_, shape) => shape));
-  const result = grid(shapes, Uint16Array.from(shapes, (_, i) => Math.floor(i / 44)));
+  const shapes = FAMILIES.flatMap(() => Array.from({ length: BLOCK_SHAPES.length }, (_, shape) => shape));
+  const result = grid(shapes, Uint16Array.from(shapes, (_, i) => Math.floor(i / BLOCK_SHAPES.length)));
   const nbt = readNbt(encodeSchem(result, FAMILIES)).value;
   assert.equal(readVarInts(nbt.BlockData).length, shapes.length);
   for (const state of Object.keys(nbt.Palette)) {
@@ -81,7 +83,7 @@ test('independent per-shape colors reach both the merged preview and falling ins
   assert.deepEqual(rgb, new Set(['1,0,0', '0,1,0', '0,0,1']));
   assert.deepEqual(Array.from(falling.colors), [1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1]);
   assert.deepEqual(result.shapes, before);
-  assert.equal(Object.keys(familyColors(FAMILIES[0])).length, 3);
+  assert.equal(Object.keys(familyColors(FAMILIES[0])).length, 4);
 });
 
 test('solid-color automatic suggestions avoid glass, and exact copper ties prefer a waxed variant', () => {

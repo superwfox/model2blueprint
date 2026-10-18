@@ -2,7 +2,7 @@ import type { BlockFamily, Vec3 } from './types.ts';
 
 export type Facing = 'north' | 'east' | 'south' | 'west';
 export type StairTurn = 'straight' | 'inner_left' | 'inner_right' | 'outer_left' | 'outer_right';
-interface BlockShape { mask: number; facing?: Facing; half?: 'bottom' | 'top'; turn?: StairTurn }
+interface BlockShape { mask: number; facing?: Facing; half?: 'bottom' | 'top'; turn?: StairTurn; shelf?: boolean }
 export interface ShapeBox { center: Vec3; size: Vec3 }
 
 // Bits x + 2*z + 4*y describe eight half-size cubes. Minecraft facing points at the tall side.
@@ -18,25 +18,36 @@ for (const half of ['bottom', 'top'] as const) for (let direction = 0; direction
     facing: facings[direction], half, turn: turns[turn],
   });
 }
-export const SHAPE_MASKS = Uint8Array.from(BLOCK_SHAPES, shape => shape.mask);
+export const SHELF_START = BLOCK_SHAPES.length;
 const unique = [...new Map(BLOCK_SHAPES.map((shape, id) => [shape.mask, id])).values()];
 const exact = new Int16Array(256).fill(-1);
 // Prefer the first equivalent state, and straight stairs before corner states.
 BLOCK_SHAPES.forEach((shape, id) => { if (exact[shape.mask] < 0) exact[shape.mask] = id; });
+for (const facing of facings) BLOCK_SHAPES.push({ mask: 0, facing, shelf: true });
+// Shelves have no half-cell mask: their actual 1/16-scale boxes must be used.
+export const SHAPE_MASKS = Uint8Array.from(BLOCK_SHAPES, shape => shape.mask);
+export const isShelf = (shape: number): boolean => shape >= SHELF_START && shape < BLOCK_SHAPES.length;
 
-export function fitShape(coverage: Float32Array, offset: number, tieMask: number): number {
+export function fitShape(coverage: Float32Array, offset: number, tieMask: number, shelves?: Float32Array, shelfOffset = 0): number {
   let mask = 0;
   for (let bit = 0; bit < 8; bit++) {
     const c = coverage[offset + bit];
     if (c > 0.5 + 1e-6 || (Math.abs(c - 0.5) <= 1e-6 && (tieMask & (1 << bit)))) mask |= 1 << bit;
   }
-  if (exact[mask] >= 0) return exact[mask];
-  let best = 0, bestError = Infinity;
-  for (const id of unique) {
+  let best = exact[mask], bestError = Infinity;
+  for (const id of best >= 0 ? [best] : unique) {
     const shape = SHAPE_MASKS[id];
     let error = id >= 4 ? 0.025 : 0; // Only choose a stair when it improves geometric coverage.
     for (let bit = 0; bit < 8; bit++) error += shape & (1 << bit) ? 1 - coverage[offset + bit] : coverage[offset + bit];
     if (error < bestError - 1e-6) { bestError = error; best = id; }
+  }
+  if (shelves) {
+    let volume = 0;
+    for (let bit = 0; bit < 8; bit++) volume += coverage[offset + bit] / 8;
+    for (let direction = 0; direction < 4; direction++) {
+      const error = (volume + 0.25 - 2 * Math.min(0.25, shelves[shelfOffset + direction])) * 8 + 0.02;
+      if (error < bestError - 1e-6) { bestError = error; best = SHELF_START + direction; }
+    }
   }
   return best;
 }
@@ -47,10 +58,22 @@ export function blockState(family: BlockFamily, shape: number): string {
   if (shape === 1 || shape === 2) return `${family.slab}[type=${shape === 1 ? 'bottom' : 'top'},waterlogged=false]`;
   const state = BLOCK_SHAPES[shape];
   if (!state?.facing) throw new Error('输出中包含无效方块形状。');
+  if (state.shelf) return `${family.shelf}[facing=${state.facing},powered=false,side_chain=unconnected,waterlogged=false]`;
   return `${family.stairs}[facing=${state.facing},half=${state.half},shape=${state.turn},waterlogged=false]`;
 }
 
 function boxes(shape: number): ShapeBox[] {
+  if (isShelf(shape)) {
+    // Vanilla template_shelf_body: back z=13..16; lips z=11..13, y=0..4 / 12..16.
+    const north: ShapeBox[] = [{ center: [0.5, 0.5, 29 / 32], size: [1, 1, 3 / 16] },
+      { center: [0.5, 1 / 8, 3 / 4], size: [1, 1 / 4, 1 / 8] },
+      { center: [0.5, 7 / 8, 3 / 4], size: [1, 1 / 4, 1 / 8] }];
+    return north.map(box => {
+      const center: Vec3 = [...box.center], size: Vec3 = [...box.size];
+      for (let n = 0; n < shape - SHELF_START; n++) { [center[0], center[2]] = [1 - center[2], center[0]]; [size[0], size[2]] = [size[2], size[0]]; }
+      return { center, size };
+    });
+  }
   const mask = SHAPE_MASKS[shape];
   if (!mask) return [];
   if (shape === 3) return [{ center: [0.5, 0.5, 0.5], size: [1, 1, 1] }];
@@ -69,3 +92,6 @@ function boxes(shape: number): ShapeBox[] {
   return result;
 }
 export const SHAPE_BOXES = BLOCK_SHAPES.map((_, id) => boxes(id));
+export function shapeContains(shape: number, x: number, y: number, z: number): boolean {
+  return SHAPE_BOXES[shape].some(box => [x, y, z].every((p, axis) => p >= box.center[axis] - box.size[axis] / 2 && p < box.center[axis] + box.size[axis] / 2));
+}

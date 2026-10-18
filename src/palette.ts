@@ -6,6 +6,7 @@ import type { BlockFamily, BlockOption, SourceMaterial, Vec3 } from './types.ts'
 export const FULL_BLOCKS = catalog.full as BlockOption[];
 export const SLABS = catalog.slab as BlockOption[];
 export const STAIRS = catalog.stairs as BlockOption[];
+export const SHELVES = catalog.shelf as BlockOption[];
 const slabById = new Map(SLABS.map(block => [block.id, block]));
 const stairById = new Map(STAIRS.map(block => [block.id, block]));
 
@@ -30,9 +31,10 @@ function nearest(color: Vec3, candidates: BlockOption[]): BlockOption {
 export const FAMILIES: BlockFamily[] = FULL_BLOCKS.map(block => {
   const slab = slabById.get(block.slab ?? '') ?? nearest(block.color, SLABS);
   const stairs = stairById.get(block.stairs ?? '') ?? nearest(block.color, STAIRS);
+  const shelf = nearest(block.color, SHELVES);
   return { id: block.id, label: block.label, group: block.group, color: block.color,
     full: `minecraft:${block.state ?? block.id}`, slab: `minecraft:${slab.id}`, stairs: `minecraft:${stairs.id}`,
-    slabColor: slab.color, stairsColor: stairs.color };
+    shelf: `minecraft:${shelf.id}`, slabColor: slab.color, stairsColor: stairs.color, shelfColor: shelf.color };
 });
 
 export function suggestFamily(material: SourceMaterial): number {
@@ -40,8 +42,8 @@ export function suggestFamily(material: SourceMaterial): number {
   return FULL_BLOCKS.indexOf(nearest(material.color, eligible));
 }
 
-export function optionFor(family: BlockFamily, kind: 'full' | 'slab' | 'stairs'): BlockOption {
-  const options = kind === 'full' ? FULL_BLOCKS : kind === 'slab' ? SLABS : STAIRS;
+export function optionFor(family: BlockFamily, kind: 'full' | 'slab' | 'stairs' | 'shelf'): BlockOption {
+  const options = kind === 'full' ? FULL_BLOCKS : kind === 'slab' ? SLABS : kind === 'stairs' ? STAIRS : SHELVES;
   const id = family[kind].replace(/^minecraft:/, '').split('[')[0];
   return options.find(block => block.id === id)!;
 }

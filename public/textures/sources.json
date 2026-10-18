@@ -1,0 +1,1702 @@
+[
+  {
+    "source": "solid-colour fallback",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/ancient_debris_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/ancient_debris_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/bedrock.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/blue_ice.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/bone_block_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/bone_block_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/brain_coral_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/bubble_coral_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cactus_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cactus_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cactus_bottom.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/calcite.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pumpkin_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pumpkin_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/carved_pumpkin.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chorus_plant.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chorus_flower.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/clay.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/coarse_dirt.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/crying_obsidian.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dead_brain_coral_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dead_bubble_coral_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dead_fire_coral_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dead_horn_coral_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dead_tube_coral_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dirt.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/grass_path_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/grass_path_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dried_kelp_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dried_kelp_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dried_kelp_bottom.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dripstone_block_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/farmland.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/fire_coral_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/glowstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/grass_block_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/grass_block_top.png",
+    "tint": [
+      109,
+      196,
+      117
+    ]
+  },
+  {
+    "source": "assets/minecraft/textures/block/gravel.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/hay_block_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/hay_block_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/honeycomb_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/horn_coral_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/ice.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/jack_o_lantern.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/magma.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/melon_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/melon_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/mud.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/mycelium_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/mycelium_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/nether_wart_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/obsidian.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/ochre_froglight_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/ochre_froglight_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/packed_ice.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pearlescent_froglight_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pearlescent_froglight_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/podzol_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/podzol_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/potent_sulfur.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/red_sand.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/resin_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/rooted_dirt.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sand.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sculk4_e.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sculk_shrieker_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sculk_shrieker_inner_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sculk_shrieker_bottom.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/shroomlight.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sniffer_egg_not_cracked.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/snow.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/soul_sand.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/soul_soil.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sponge.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/tube_coral_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/verdant_froglight_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/verdant_froglight_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/wet_sponge.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/acacia_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/acacia_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/acacia_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/bamboo_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/bamboo_block_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/bamboo_mosaic.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/bamboo_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/birch_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/birch_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/birch_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cherry_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cherry_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cherry_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/crimson_stem.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/crimson_nylium_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/crimson_nylium.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/netherrack.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/crimson_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/crimson_stem_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dark_oak_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dark_oak_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dark_oak_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/jungle_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/jungle_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/jungle_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/mangrove_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/mangrove_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/mangrove_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/muddy_mangrove_roots_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/muddy_mangrove_roots_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/oak_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/oak_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/oak_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pale_oak_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pale_oak_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pale_oak_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/poplar_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/poplar_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/poplar_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/spruce_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/spruce_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/spruce_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_acacia_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_acacia_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_bamboo_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_bamboo_block_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_birch_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_birch_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_cherry_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_cherry_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_crimson_stem.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_crimson_stem_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_dark_oak_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_dark_oak_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_jungle_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_jungle_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_mangrove_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_mangrove_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_oak_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_oak_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_pale_oak_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_pale_oak_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_poplar_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_poplar_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_spruce_log.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_spruce_log_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_warped_stem.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stripped_warped_stem_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/warped_stem.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/warped_nylium_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/warped_nylium.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/warped_planks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/warped_stem_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/warped_wart_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/acacia_leaves.png",
+    "tint": [
+      91,
+      177,
+      85
+    ]
+  },
+  {
+    "source": "assets/minecraft/textures/block/azalea_leaves.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/birch_leaves.png",
+    "tint": [
+      128,
+      167,
+      85
+    ]
+  },
+  {
+    "source": "assets/minecraft/textures/block/cherry_leaves.png",
+    "tint": [
+      91,
+      177,
+      85
+    ]
+  },
+  {
+    "source": "assets/minecraft/textures/block/dark_oak_leaves.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/flowering_azalea_leaves.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/jungle_leaves.png",
+    "tint": [
+      91,
+      177,
+      85
+    ]
+  },
+  {
+    "source": "assets/minecraft/textures/block/mangrove_leaves.png",
+    "tint": [
+      141,
+      177,
+      39
+    ]
+  },
+  {
+    "source": "assets/minecraft/textures/block/moss_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/mossy_cobblestone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/mossy_stone_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/oak_leaves.png",
+    "tint": [
+      91,
+      177,
+      85
+    ]
+  },
+  {
+    "source": "assets/minecraft/textures/block/orange_poplar_leaves.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pale_moss_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pale_oak_leaves.png",
+    "tint": [
+      91,
+      177,
+      85
+    ]
+  },
+  {
+    "source": "assets/minecraft/textures/block/red_poplar_leaves.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/spruce_leaves.png",
+    "tint": [
+      97,
+      153,
+      97
+    ]
+  },
+  {
+    "source": "assets/minecraft/textures/block/yellow_poplar_leaves.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/black_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/black_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/blue_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/blue_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/brown_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/brown_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cyan_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cyan_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/gray_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/gray_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/green_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/green_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_blue_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_blue_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_gray_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_gray_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/lime_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/lime_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/magenta_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/magenta_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/orange_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/orange_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pink_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pink_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/purple_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/purple_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/red_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/red_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/white_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/white_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/yellow_concrete.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/yellow_concrete_powder.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/black_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/blue_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/brown_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cyan_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/gray_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/green_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_blue_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_gray_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/lime_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/magenta_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/orange_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pink_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/purple_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/red_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/tinted_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/white_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/yellow_stained_glass.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/amethyst_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/andesite.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/basalt_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/basalt_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/blackstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/blackstone_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_cinnabar.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_deepslate.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_nether_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_polished_blackstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_quartz_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_quartz_block_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_red_a_sandstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/red_sandstone_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_resin_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_a_sandstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sandstone_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_stone_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_sulfur.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_tuff.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_tuff_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_tuff_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_tuff_bricks_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cinnabar.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cinnabar_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cobbled_deepslate.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cobblestone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cracked_deepslate_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cracked_deepslate_tiles.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cracked_nether_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cracked_polished_blackstone_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cracked_stone_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cut_red_sandstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cut_sandstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dark_prismarine.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate_tiles.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/diorite.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/end_stone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/end_stone_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/gilded_blackstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/granite.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/mud_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/nether_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/packed_mud.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/polished_andesite.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/polished_basalt_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/polished_basalt_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/polished_blackstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/polished_blackstone_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/polished_cinnabar.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/polished_deepslate.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/polished_diorite.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/polished_granite.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/polished_sulfur.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/polished_tuff.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/prismarine.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/prismarine_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/purpur_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/purpur_pillar_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/purpur_pillar_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/quartz_block_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/quartz_block_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/quartz_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/quartz_pillar_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/quartz_pillar_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/red_nether_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/red_sandstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/reinforced_deepslate_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/reinforced_deepslate_top.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/reinforced_deepslate_bottom.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/resin_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sandstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sea_lantern.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/smooth_basalt.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/quartz_block_bottom.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/smooth_red_sandstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/smooth_sandstone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/smooth_stone.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/stone_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sulfur.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/sulfur_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/tuff.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/tuff_bricks.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/coal_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/coal_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate_coal_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate_diamond_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate_emerald_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate_gold_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate_iron_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate_lapis_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate_redstone_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/diamond_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/diamond_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/emerald_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/emerald_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/gold_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/gold_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/iron_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/iron_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/lapis_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/lapis_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/nether_gold_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/nether_quartz_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/netherite_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/raw_gold_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/raw_iron_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/redstone_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/black_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/blue_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/brown_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cyan_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/gray_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/green_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_blue_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_gray_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/lime_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/magenta_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/orange_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pink_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/purple_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/red_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/white_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/yellow_wool.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/chiseled_copper.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/copper_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/copper_grate.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/copper_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cut_copper.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/deepslate_copper_ore.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/exposed_chiseled_copper.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/exposed_copper.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/exposed_copper_grate.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/exposed_cut_copper.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/oxidized_chiseled_copper.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/oxidized_copper.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/oxidized_copper_grate.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/oxidized_cut_copper.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/raw_copper_block.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/weathered_chiseled_copper.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/weathered_copper.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/weathered_copper_grate.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/weathered_cut_copper.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/black_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/black_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/blue_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/blue_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/brown_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/brown_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cyan_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cyan_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/gray_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/gray_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/green_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/green_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_blue_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_blue_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_gray_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/light_gray_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/lime_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/lime_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/magenta_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/magenta_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/orange_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/orange_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pink_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pink_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/purple_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/purple_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/red_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/red_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/white_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/white_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/yellow_glazed_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/yellow_terracotta.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/smooth_stone_slab_side.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/acacia_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/bamboo_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/birch_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/cherry_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/crimson_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/dark_oak_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/jungle_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/mangrove_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/oak_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/pale_oak_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/poplar_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/spruce_shelf.png",
+    "tint": null
+  },
+  {
+    "source": "assets/minecraft/textures/block/warped_shelf.png",
+    "tint": null
+  }
+]
