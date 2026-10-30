@@ -33,7 +33,7 @@ export class Viewer {
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     this.renderer.toneMapping = ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.15;
-    this.renderer.setClearColor('#141c23');
+    this.renderer.setClearColor('#000000');
     container.append(this.renderer.domElement);
     this.renderer.domElement.setAttribute('aria-label', '建筑三维预览，可拖动旋转、滚轮缩放，按住 Shift 精细缩放');
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -81,7 +81,7 @@ export class Viewer {
     this.original.position.set(...model.min.map(v => -v * size.scale) as [number, number, number]);
     if (this.grid) { this.scene.remove(this.grid); this.grid.geometry.dispose(); (this.grid.material as import('three').Material).dispose(); }
     const span = Math.max(size.width, size.length);
-    this.grid = new GridHelper(span * 1.25, 20, '#4b5d68', '#283942');
+    this.grid = new GridHelper(span * 1.25, 20, '#655f51', '#262626');
     this.grid.position.set(size.width / 2, -0.04, size.length / 2); this.scene.add(this.grid);
     this.fit();
   }

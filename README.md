@@ -17,7 +17,7 @@
 ## 使用
 
 1. 从 Blender 导出 GLB 2.0：选择需要的建筑部件，嵌入资源，关闭 Draco 几何压缩。
-2. 将文件拖入小方块组成的边框即可自动转换。边框上的原有方块保持位置，以连续非线性的大小、亮度和光晕过渡形成贪吃蛇循环；默认速率为原来的 1.4 倍，工作期间的加速进程为原来的两倍，到约 92% 进度后平滑减速并恢复闲置速度。加载框淡出后，可见方块从上方独立掉落，整体由低处逐步搭起。
+2. 将文件拖入窗棂细框或点击「选择 GLB 文件」即可自动转换。麦金色角花在处理期间顺序起伏，随进度加快，接近完成后恢复；启用减少动态效果时不播放动画。加载框淡出后，可见方块从上方独立掉落，整体由低处逐步搭起。
 3. 工具栏可修改最长水平边（默认 256），其余尺寸等比计算，底部归零；材质按钮可分别选择每种材质的完整方块、半砖、楼梯和展示架，支持中文名或方块 ID 搜索。
 4. 工具栏可切换原模与方块结果；点击材质或切片按钮时，同一个顶部容器伸展开，内容在容器内显示。普通缩放速度提高到 3 倍，按住 Shift 恢复原有的精细速度。切片以四分之一格高度检查，按展示架的真实轮廓绘制。
 5. 下载 `.schem`，在 Axiom 的 **File → Import Schematic** 中导入。
@@ -105,13 +105,17 @@ node --experimental-strip-types scripts/verify-model.ts "模型.glb" "结果.sch
 
 ## 字体
 
-界面使用用户提供的钉钉进步体，英文展示字使用 Minecrafter Alt，均本地加载。中文字体按界面文字、方块名称和分类裁切为约 69 KB 的 WOFF2；未收录的自定义材质名称字符由系统字体补充。字体元数据中的署名保留于 `public/fonts/NOTICES.txt`。
+品牌使用 Minecrafter Alt，固定界面文案使用江西拙楷，输入值、材质名称、方块名称与处理状态使用钉钉进步体，均本地加载。江西拙楷按当前界面文案裁切为约 161 KiB 的 WOFF2；钉钉进步体保留来源完整字集（约 985 KiB），自定义名称中未收录的字符由系统字体补充。字体说明见 `public/fonts/NOTICES.txt`。
 
 维护者更新界面文案或材质库后，可用 Python + fonttools / Brotli 重新裁切；这些仅是离线工具，不是网页依赖：
 
 ```sh
-python scripts/subset-fonts.py "DingTalk-JinBuTi.woff2" "Minecrafter.Alt.ttf"
+python scripts/subset-fonts.py "DingTalk-JinBuTi.woff2" "Minecrafter.Alt.ttf" --ui "jiangxizhuokai.ttf"
 ```
+
+## 界面设计参考
+
+`ref/` 保存从 `minecraft-dev` 复制的设计原型、实际主题 CSS、Vue 角花指令与字体规则，来源及本项目映射见 [ref/README.md](ref/README.md)。配色以实际主题 CSS 为准：黑色背景、麦金色强调、暖灰正文、直角细框与窗棂角花。运行实现位于 `src/style.css`、`src/lattice.ts` 和 `src/upload-frame.ts`，使用原生 DOM，不引入 Vue 或其他生产依赖。
 
 ## 格式与版本依据
 

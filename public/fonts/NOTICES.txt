@@ -3,3 +3,12 @@ DingTalk-JinBuTi.woff2
 Copyright © 2022 DingTalk (China) Information Technology Co., Ltd. All rights reserved.
 
 Minecrafter.Alt.ttf
+
+jiangxizhuokai.woff2
+Source: minecraft-dev/public/jiangxizhuokai_full.woff2 (user-provided local reference).
+Font metadata: fontree; huang yu chen.
+Subset for fixed UI copy. Source font attribution is recorded above.
+
+jinbuti-content.woff2
+Source: minecraft-dev/public/dingtalk-jinbuti-full.woff2 (user-provided local reference).
+Full source character set, used for dynamic content. Attribution as above.

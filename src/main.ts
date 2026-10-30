@@ -5,6 +5,7 @@ import { FAMILIES, FULL_BLOCKS, SLABS, STAIRS, SHELVES, optionFor, suggestFamily
 import { Viewer } from './viewer.ts';
 import { SHAPE_BOXES, shapeContains } from './block-shapes.ts';
 import { UploadFrame } from './upload-frame.ts';
+import { decorateLattice } from './lattice.ts';
 import { colorSlots, familyColors, shapeSlot } from './colors.ts';
 import { familyTextures, thumbnailStyle } from './texture-data.ts';
 import type { BlockFamily, BlockOption, ModelData, VoxelResult, WorkerReply, WorkerRequest } from './types.ts';
@@ -15,13 +16,18 @@ const paletteIcon = icon('<circle cx="8" cy="8" r="1"/><circle cx="15" cy="7" r=
 document.querySelector('#app')!.innerHTML = `
 <main id="workspace" data-state="empty">
   <div id="viewport"></div>
+  <header class="workspace-header">
+    <div class="brand"><span class="brand-wordmark">GLB <span class="brand-arrow">→</span> SCHEM</span><span class="brand-caption">建筑转换器</span></div>
+    <span class="local-badge"><span aria-hidden="true"></span>本地处理 · 模型无需上传</span>
+  </header>
   <div id="upload-frame">
-    <svg class="frame-lines" aria-hidden="true"></svg>
     <button id="upload-hit" aria-label="上传 GLB" title="拖入 GLB，或点击上传">
+      <span class="upload-eyebrow">从模型，到方块</span>
       <span class="upload-mark">${icon('<path d="m12 2 9 5v10l-9 5-9-5V7l9-5Zm0 10 9-5M12 12 3 7m9 5v10"/>')}</span>
       <span class="upload-title">拖拽 GLB 到这里</span>
-      <span class="upload-hint">或点击导入，转为 Minecraft 投影文件</span>
-      <span class="upload-format">GLB <span aria-hidden="true">→</span> SCHEM</span>
+      <span class="upload-hint">保留建筑的轮廓与细节，转为 Minecraft 投影文件</span>
+      <span class="upload-action">选择 GLB 文件 <span aria-hidden="true">↗</span></span>
+      <span class="upload-format">GLB 2.0 <span aria-hidden="true">/</span> SPONGE SCHEMATIC V2</span>
     </button>
   </div>
   <input id="model-file" type="file" accept=".glb" hidden />
@@ -29,16 +35,16 @@ document.querySelector('#app')!.innerHTML = `
     <div id="toolbar-row">
     <button id="file-button" class="tool" aria-label="更换 GLB" title="更换 GLB">${uploadIcon}</button>
     <span class="divider"></span>
-    <input id="horizontal-size" type="number" min="1" max="65535" step="1" value="256" aria-label="最长水平边" title="最长水平边（格）" />
+    <label class="size-control"><span>最长边</span><input id="horizontal-size" type="number" min="1" max="65535" step="1" value="256" aria-label="最长水平边" title="最长水平边（格）" /><span>格</span></label>
     <button id="convert" class="tool" aria-label="重新转换" title="重新转换">${icon('<path d="M20 7v5h-5M4 17v-5h5M6 6a8 8 0 0 1 13 3M18 18a8 8 0 0 1-13-3"/>')}</button>
     <span class="divider"></span>
-    <div class="mode-switch"><button id="original-tab" class="mode" title="原始模型">原模</button><button id="result-tab" class="mode active" title="完整方块、半砖、楼梯与展示架">方块</button></div>
+    <div class="mode-switch" role="group" aria-label="预览模式"><button id="original-tab" class="mode" title="原始模型" aria-pressed="false">原模</button><button id="result-tab" class="mode active" title="完整方块、半砖、楼梯与展示架" aria-pressed="true">方块</button></div>
     <span class="divider"></span>
-    <button id="material-toggle" class="tool" aria-label="材质映射" title="材质映射" aria-pressed="false">${paletteIcon}</button>
-    <button id="slice-toggle" class="tool" aria-label="水平切片" title="水平切片" aria-pressed="false">${icon('<path d="m3 12 9-5 9 5-9 5-9-5Zm0 5 9 5 9-5M12 2v5"/>')}</button>
+    <button id="material-toggle" class="tool tool-labelled" aria-label="材质映射" title="材质映射" aria-pressed="false">${paletteIcon}<span>材质</span></button>
+    <button id="slice-toggle" class="tool tool-labelled" aria-label="水平切片" title="水平切片" aria-pressed="false">${icon('<path d="m3 12 9-5 9 5-9 5-9-5Zm0 5 9 5 9-5M12 2v5"/>')}<span>切片</span></button>
     <button id="fit" class="tool" aria-label="适应视图" title="适应视图">${icon('<path d="M4 9V4h5m6 0h5v5m0 6v5h-5M9 20H4v-5"/>')}</button>
     <span class="divider"></span>
-    <button id="download" class="tool download" aria-label="下载 Schem" title="下载 .schem">${icon('<path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/>')}</button>
+    <button id="download" class="tool tool-labelled download" aria-label="下载 Schem" title="下载 .schem">${icon('<path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/>')}<span>下载 .schem</span></button>
     <button id="cancel" class="tool" aria-label="取消转换" title="取消转换" hidden>${icon('<path d="m6 6 12 12M6 18 18 6"/>')}</button>
     </div>
     <div id="toolbar-expansion" aria-hidden="true" inert><div class="expansion-inner">
@@ -52,13 +58,17 @@ document.querySelector('#app')!.innerHTML = `
       <section id="slice-panel" class="panel" hidden><div class="slice-heading"><span>水平切片</span><span id="slice-height">Y 0–0.25</span></div><canvas id="slice-canvas" aria-label="四分之一格高度切片"></canvas><input id="slice-range" type="range" min="0" max="1" step="1" value="0" aria-label="切片高度" /><div id="slice-info"></div></section>
     </div></div>
   </nav>
+  <footer class="workspace-footer"><span class="empty-note">完整方块 · 半砖 · 楼梯 · 展示架</span><span class="view-note">拖动旋转 · 滚轮缩放 · Shift 精细缩放</span><span>Minecraft Java 26.3</span></footer>
   <div id="status" role="status" aria-live="polite"></div>
 </main>`;
+
+document.querySelectorAll<HTMLElement>('.tool, .mode, .upload-action').forEach(element => decorateLattice(element));
+decorateLattice(document.getElementById('toolbar')!, 'frame');
 
 const el = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const fileInput = el<HTMLInputElement>('model-file'), sizeInput = el<HTMLInputElement>('horizontal-size');
 const sliceRange = el<HTMLInputElement>('slice-range'), sliceCanvas = el<HTMLCanvasElement>('slice-canvas');
-const uploadFrame = new UploadFrame(document.querySelector<SVGSVGElement>('.frame-lines')!);
+const uploadFrame = new UploadFrame(el('upload-frame'));
 let viewer: Viewer | undefined;
 try { viewer = new Viewer(el('viewport')); } catch { /* Slices and export remain available without WebGL. */ }
 let model: ModelData | undefined, result: VoxelResult | undefined, originalScene: import('three').Object3D | undefined;
@@ -95,6 +105,7 @@ function setBusy(value: boolean): void {
 function setMode(mode: 'original' | 'result'): void {
   previewMode = mode; viewer?.setMode(mode);
   el('original-tab').classList.toggle('active', mode === 'original'); el('result-tab').classList.toggle('active', mode === 'result');
+  el('original-tab').setAttribute('aria-pressed', String(mode === 'original')); el('result-tab').setAttribute('aria-pressed', String(mode === 'result'));
 }
 function closePanels(): void {
   activePanel = undefined; el('toolbar').classList.remove('expanded');
@@ -271,7 +282,7 @@ function drawSlice(): void {
   const colors = families.map(family => colorSlots(familyColors(family)));
   const scale = Math.min(4, 4096 / Math.max(width, length));
   sliceCanvas.width = Math.max(1, Math.ceil(width * scale)); sliceCanvas.height = Math.max(1, Math.ceil(length * scale));
-  const context = sliceCanvas.getContext('2d')!; context.fillStyle = '#111d22'; context.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+  const context = sliceCanvas.getContext('2d')!; context.fillStyle = '#040402'; context.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
   for (let z = 0; z < length; z++) for (let x = 0; x < width; x++) {
     const cell = x + z * width + y * width * length, shape = result.shapes[cell]; if (!shape) continue;
     context.fillStyle = `rgb(${colors[result.materials[cell]][shapeSlot(shape)].join(',')})`;
