@@ -126,6 +126,15 @@ svg { display: block; width: 22px; height: 22px; flex-shrink: 0; }
 #horizontal-size { width: 66px; min-width: 66px; height: 46px; padding: 10px 8px; border: 1px solid var(--line-warm); border-radius: 0; background: var(--surface-2); text-align: center; font-size: 15px; appearance: textfield; color: var(--text-primary); }
 #horizontal-size::-webkit-inner-spin-button { appearance: none; }
 #horizontal-size[aria-invalid=true] { border-color: var(--cyan); }
+/* Preserve the compact preview layout while updating materials or exporting. */
+#workspace.has-preview .workspace-header { display: none; }
+#workspace.has-preview #toolbar { top: 16px; width: 960px; padding: 10px 14px; }
+#workspace.has-preview #toolbar.expanded { width: 1180px; }
+#workspace.has-preview #toolbar-row { gap: 8px; min-height: 50px; }
+#workspace.has-preview :is(.tool, .mode) { min-height: 42px; padding: 8px 20px; gap: 10px; }
+#workspace.has-preview .tool:not(.tool-labelled) { width: 42px; height: 42px; padding: 10px; }
+#workspace.has-preview .size-control { gap: 8px; }
+#workspace.has-preview #horizontal-size { width: 62px; min-width: 62px; height: 42px; padding: 8px; }
 #toolbar-expansion { display: grid; grid-template-rows: 0fr; opacity: 0; pointer-events: none; transition: grid-template-rows .34s cubic-bezier(.22,.7,.25,1), opacity .2s; }
 #toolbar.expanded #toolbar-expansion { grid-template-rows: 1fr; opacity: 1; pointer-events: auto; }
 .expansion-inner { min-height: 0; overflow: hidden; }

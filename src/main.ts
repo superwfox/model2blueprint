@@ -83,6 +83,7 @@ function status(message: string, error = false): void {
   el('status').classList.toggle('error', error);
 }
 function controls(): void {
+  el('workspace').classList.toggle('has-preview', Boolean(result));
   el('toolbar').hidden = !model;
   for (const id of ['file-button', 'convert', 'material-toggle', 'fit']) el<HTMLButtonElement>(id).disabled = busy || !model;
   for (const id of ['download', 'result-tab', 'slice-toggle']) el<HTMLButtonElement>(id).disabled = busy || !result || !validSize;
@@ -154,6 +155,7 @@ async function executeConversion(): Promise<void> {
   status(message.output.surface.warning ?? (viewer ? '转换完成' : '三维预览不可用，可使用切片或下载到 Axiom 查看。'), Boolean(message.output.surface.warning) || !viewer);
   // Prepare the scene first, then start its clock after the loading overlay has left.
   el('workspace').dataset.state = 'ready';
+  el('workspace').classList.add('has-preview');
   await Promise.all([el('viewport'), el('upload-frame')].flatMap(element => element.getAnimations())
     .map(animation => animation.finished.catch(() => {})));
   viewer?.startResultAnimation();
