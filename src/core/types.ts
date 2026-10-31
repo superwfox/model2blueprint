@@ -55,14 +55,5 @@ export interface SurfaceData { positions: Float32Array; normals: Float32Array; c
 export interface FallingData { centers: Float32Array; sizes: Float32Array; anchors: Float32Array; colors: Float32Array; textures?: Float32Array }
 export interface ConversionOutput { result: VoxelResult; surface: SurfaceData; falling?: FallingData }
 
-export type WorkerRequest =
-  | { type: 'convert'; model: ModelData; horizontalSize: number; colors: MaterialColors[]; textures?: MaterialTextures[]; animate?: boolean }
-  | { type: 'remesh'; result: VoxelResult; colors: MaterialColors[]; textures?: MaterialTextures[] }
-  | { type: 'export'; result: VoxelResult; families: BlockFamily[] };
-
-export type WorkerReply =
-  | { type: 'progress'; progress: number; message: string }
-  | { type: 'done'; output: ConversionOutput }
-  | { type: 'surface'; surface: SurfaceData }
-  | { type: 'exported'; bytes: Uint8Array }
-  | { type: 'error'; message: string };
+export type BlockKind = 'full' | 'slab' | 'stairs' | 'shelf';
+export type ManualVariants = Record<Exclude<BlockKind, 'full'>, boolean>;

@@ -1,9 +1,9 @@
 /// <reference lib="webworker" />
-import { voxelize } from './voxelize.ts';
-import { meshSurface } from './surface.ts';
-import { gzipSchem } from './schem.ts';
-import { fallingBlocks } from './falling-data.ts';
-import type { WorkerReply, WorkerRequest } from './types.ts';
+import { voxelize } from '../../core/voxelize.ts';
+import { meshSurface } from '../../core/surface.ts';
+import { gzipSchem } from '../schem.ts';
+import { fallingBlocks } from '../../core/falling-data.ts';
+import type { WorkerReply, WorkerRequest } from './protocol.ts';
 
 const worker = self as unknown as DedicatedWorkerGlobalScope;
 const reply = (message: WorkerReply, transfer: Transferable[] = []) => worker.postMessage(message, transfer);

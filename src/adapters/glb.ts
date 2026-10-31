@@ -1,6 +1,6 @@
 import { BufferGeometry, Color, LoadingManager, Matrix4, Mesh, Object3D, Texture, Vector3, InstancedMesh, SkinnedMesh, MeshStandardMaterial } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import type { ModelData, MeshPart, SourceMaterial, Vec3 } from './types.ts';
+import type { ModelData, MeshPart, SourceMaterial, Vec3 } from '../core/types.ts';
 
 export function inspectGlb(buffer: ArrayBuffer): void {
   const view = new DataView(buffer);
@@ -25,14 +25,22 @@ export function inspectGlb(buffer: ArrayBuffer): void {
   }
 }
 
-export async function loadGlb(buffer: ArrayBuffer): Promise<{ scene: Object3D; model: ModelData }> {
+async function parseGlb(buffer: ArrayBuffer) {
   inspectGlb(buffer);
   const manager = new LoadingManager();
   manager.setURLModifier(url => {
     if (!url.startsWith('blob:') && !url.startsWith('data:')) throw new Error('GLB 包含外部资源，已停止读取。');
     return url;
   });
-  const gltf = await new GLTFLoader(manager).parseAsync(buffer, '');
+  return new GLTFLoader(manager).parseAsync(buffer, '');
+}
+
+export async function loadGlbScene(buffer: ArrayBuffer): Promise<Object3D> {
+  return (await parseGlb(buffer)).scene;
+}
+
+export async function loadGlb(buffer: ArrayBuffer): Promise<{ scene: Object3D; model: ModelData }> {
+  const gltf = await parseGlb(buffer);
   try {
     const references = gltf.parser.associations as Map<Object3D, { nodes?: number }>;
     const model = extractModel(gltf.scene, object => {

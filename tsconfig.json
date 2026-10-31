@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "types": ["vite/client", "node"]
   },
-  "include": ["src", "test", "scripts"]
+  "include": ["src/**/*.ts", "src/**/*.vue", "test", "scripts", "vite.config.ts"]
 }

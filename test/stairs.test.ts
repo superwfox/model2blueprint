@@ -1,15 +1,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BoxGeometry, ExtrudeGeometry, Group, Mesh, MeshStandardMaterial, Path, Shape } from 'three';
-import { extractModel } from '../src/glb.ts';
-import { voxelize } from '../src/voxelize.ts';
-import { meshSurface } from '../src/surface.ts';
-import { fallingBlocks } from '../src/falling-data.ts';
-import { encodeSchem } from '../src/schem.ts';
-import { BLOCK_SHAPES, SHELF_START, SHAPE_MASKS } from '../src/block-shapes.ts';
-import { FAMILIES } from '../src/palette.ts';
+import { extractModel } from '../src/adapters/glb.ts';
+import { voxelize } from '../src/core/voxelize.ts';
+import { meshSurface } from '../src/core/surface.ts';
+import { fallingBlocks } from '../src/core/falling-data.ts';
+import { encodeSchem } from '../src/core/schem.ts';
+import { BLOCK_SHAPES, SHELF_START, SHAPE_MASKS } from '../src/core/block-shapes.ts';
+import { FAMILIES } from '../src/core/palette.ts';
 import { readNbt, readVarInts } from './nbt-reader.ts';
-import type { VoxelResult } from '../src/types.ts';
+import type { VoxelResult } from '../src/core/types.ts';
 
 function fixture(shapes: number[]): VoxelResult {
   return { size: { width: shapes.length, height: 1, length: 1, scale: 1 }, shapes: Uint8Array.from(shapes),

@@ -1,5 +1,5 @@
 import { LinearMipmapLinearFilter, MeshStandardMaterial, NearestFilter, SRGBColorSpace, TextureLoader } from 'three';
-import { ATLAS } from './texture-data.ts';
+import { ATLAS } from '../../core/texture-data.ts';
 
 // The atlas stays shared across remeshes. A failed load keeps the representative colours visible.
 export class BlockTextures {

@@ -3,20 +3,27 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22.18.0" },
+  "engines": {
+    "node": ">=22.18.0"
+  },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "npm run test && tsc --noEmit && vite build",
+    "build": "npm run test && npm run typecheck && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "vue-tsc --noEmit",
     "test": "node --experimental-strip-types --test test/*.test.ts",
     "check": "npm run build"
   },
-  "dependencies": { "three": "^0.180.0" },
+  "dependencies": {
+    "three": "^0.180.0",
+    "vue": "3.5.44"
+  },
   "devDependencies": {
-    "@types/three": "^0.180.0",
     "@types/node": "^24.0.0",
+    "@types/three": "^0.180.0",
+    "@vitejs/plugin-vue": "6.0.10",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12"
+    "vite": "^7.1.12",
+    "vue-tsc": "3.3.14"
   }
 }

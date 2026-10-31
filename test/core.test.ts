@@ -2,15 +2,16 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { gunzipSync } from 'node:zlib';
 import { BoxGeometry, BufferGeometry, ExtrudeGeometry, Group, Mesh, MeshStandardMaterial, Path, PlaneGeometry, Shape } from 'three';
-import { extractModel } from '../src/glb.ts';
-import { gridSize } from '../src/geometry.ts';
-import { voxelize } from '../src/voxelize.ts';
-import { meshSurface } from '../src/surface.ts';
-import { encodeSchem, gzipSchem, DATA_VERSION } from '../src/schem.ts';
-import { FAMILIES } from '../src/palette.ts';
-import { fallingBlocks } from '../src/falling-data.ts';
+import { extractModel } from '../src/adapters/glb.ts';
+import { gridSize } from '../src/core/geometry.ts';
+import { voxelize } from '../src/core/voxelize.ts';
+import { meshSurface } from '../src/core/surface.ts';
+import { encodeSchem, DATA_VERSION } from '../src/core/schem.ts';
+import { gzipSchem } from '../src/adapters/schem.ts';
+import { FAMILIES } from '../src/core/palette.ts';
+import { fallingBlocks } from '../src/core/falling-data.ts';
 import { readNbt, readVarInts } from './nbt-reader.ts';
-import type { Vec3, VoxelResult } from '../src/types.ts';
+import type { Vec3, VoxelResult } from '../src/core/types.ts';
 
 function box(min: Vec3, max: Vec3, material = new MeshStandardMaterial()): Mesh {
   const mesh = new Mesh(new BoxGeometry(...max.map((v, i) => v - min[i]) as Vec3), material);

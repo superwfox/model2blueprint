@@ -62,9 +62,3 @@ export function encodeSchem(result: VoxelResult, families: BlockFamily[]): Uint8
   writer.byte(0);
   return writer.finish();
 }
-
-export async function gzipSchem(result: VoxelResult, families: BlockFamily[]): Promise<Uint8Array> {
-  const bytes = encodeSchem(result, families);
-  const stream = new Blob([bytes as BlobPart]).stream().pipeThrough(new CompressionStream('gzip'));
-  return new Uint8Array(await new Response(stream).arrayBuffer());
-}

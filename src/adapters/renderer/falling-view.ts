@@ -1,5 +1,5 @@
 import { BoxGeometry, InstancedBufferAttribute, InstancedBufferGeometry, InstancedInterleavedBuffer, InterleavedBufferAttribute, Mesh, MeshStandardMaterial } from 'three';
-import type { FallingData } from './types.ts';
+import type { FallingData } from '../../core/types.ts';
 
 export class FallingAnimation {
   readonly mesh: Mesh<InstancedBufferGeometry, MeshStandardMaterial>;

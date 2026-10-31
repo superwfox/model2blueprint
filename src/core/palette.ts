@@ -1,4 +1,4 @@
-import catalog from './data/block-catalog.json' with { type: 'json' };
+import catalog from '../data/block-catalog.json' with { type: 'json' };
 import { srgbLinear } from './colors.ts';
 import type { BlockFamily, BlockOption, SourceMaterial, Vec3 } from './types.ts';
 

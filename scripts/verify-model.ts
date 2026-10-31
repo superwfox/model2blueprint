@@ -1,11 +1,11 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
-import { loadGlb, disposeModel } from '../src/glb.ts';
-import { voxelize } from '../src/voxelize.ts';
-import { meshSurface } from '../src/surface.ts';
-import { FAMILIES, suggestFamily } from '../src/palette.ts';
-import { gzipSchem } from '../src/schem.ts';
-import { familyColors } from '../src/colors.ts';
+import { loadGlb, disposeModel } from '../src/adapters/glb.ts';
+import { voxelize } from '../src/core/voxelize.ts';
+import { meshSurface } from '../src/core/surface.ts';
+import { FAMILIES, suggestFamily } from '../src/core/palette.ts';
+import { gzipSchem } from '../src/adapters/schem.ts';
+import { familyColors } from '../src/core/colors.ts';
 import { readNbt, readVarInts } from '../test/nbt-reader.ts';
 
 const [input, output] = process.argv.slice(2);

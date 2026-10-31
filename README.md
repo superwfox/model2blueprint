@@ -2,6 +2,12 @@
 
 在浏览器本地把静态建筑 GLB 转为 Minecraft Java 26.3 的 Sponge Schematic v2。模型无需上传，支持完整方块、上下半砖、楼梯和四向展示架。
 
+## 项目与开发入口
+
+技术栈为 Vue 3、TypeScript、Vite 和 Three.js，源码按计算核心、浏览器适配层、Vue 应用层组织。已支持浏览器本地导入历史与工作状态自动恢复；后续方向是单人网页方块编辑器，实时编辑、撤销重做、可交换的编辑项目格式与多人协作尚未实现。
+
+开始开发先读 [AGENTS.md](AGENTS.md)、[当前状态](docs/LOCAL_HANDOFF.md)、[架构约束](docs/ARCHITECTURE.md) 和 [Changelog 最新记录](CHANGELOG.md)。每轮实际改动同步摘要与 Changelog，架构变化同步架构说明；历史按需读取，避免把旧交接和旧构建当作当前验证。
+
 ## 实际效果
 
 完整方块、半砖和楼梯共同还原柱体缝隙、镂空结构、平台台阶、斜向裂缝和植被起伏等复杂表面。以下为导入 Minecraft 后的游戏内截图。
@@ -19,8 +25,17 @@
 1. 从 Blender 导出 GLB 2.0：选择需要的建筑部件，嵌入资源，关闭 Draco 几何压缩。
 2. 将文件拖入窗棂细框或点击「选择 GLB 文件」即可自动转换。麦金色角花在处理期间顺序起伏，随进度加快，接近完成后恢复；启用减少动态效果时不播放动画。加载框淡出后，可见方块从上方独立掉落，整体由低处逐步搭起。
 3. 工具栏可修改最长水平边（默认 256），其余尺寸等比计算，底部归零；材质按钮可分别选择每种材质的完整方块、半砖、楼梯和展示架，支持中文名或方块 ID 搜索。
-4. 转换成功后，顶部品牌栏隐藏，工具栏上移并收紧高度与长度，为三维预览腾出空间；更新材质或导出期间保持该布局。工具栏可切换原模与方块结果；点击材质或切片按钮时，同一个顶部容器伸展开，内容在容器内显示。普通缩放速度提高到 3 倍，按住 Shift 恢复原有的精细速度。切片以四分之一格高度检查，按展示架的真实轮廓绘制。
+4. 转换成功后，顶部品牌栏隐藏，工具栏上移并收紧高度与长度，为三维预览腾出空间；更新材质或导出期间保持该布局。工具栏可切换原模与方块结果；点击材质或切片按钮时，同一个顶部容器伸展开，内容在容器内显示，按钮变为黑底、金色向上箭头，收起后恢复。点击三维视口获得焦点后，WASD 按当前朝向在水平 XZ 平面移动，不随俯仰改变高度；↑/↓ 单独沿 Y 轴升降。点击输入控件或窗口失焦后停止移动。普通缩放速度提高到 3 倍，按住 Shift 恢复原有的精细速度。切片以四分之一格高度检查，按展示架的真实轮廓绘制。
 5. 下载 `.schem`，在 Axiom 的 **File → Import Schematic** 中导入。
+6. 下载按钮右侧的时钟打开「导入历史」。每次成功导入保存一条记录，后续尺寸重转和材质修改更新该条；可恢复到视图或删除。刷新自动恢复上次打开的记录，包括方块结果、原模、尺寸、材质映射、预览模式、相机位置和移动速度；恢复方块预览无需重新导入或转换。
+
+移动时底部滑出临时栏，同时显示步行和飞行两组速度，进入第一人称前可一起调整；按钮切换水平/垂直方向。步行及轨道平移默认 8 blocks/s，飞行水平/垂直默认 14 blocks/s；滑条范围 1–50，旁边数字允许任意正有限数（可超过 50）。步行组垂直设置用于轨道升降，第一人称步行高度仍由跳跃与重力控制。两组设置分别随导入历史保存，旧记录已保存的共享速度保留为步行设置，飞行使用新默认值。新导入使用 8/14 默认值。操作或内容刷新后重新计时，5 秒无更新便滑出视窗。
+
+350 ms 内双击 W 并按住第二次可疾跑，水平速度为设定值的 1.3 倍（例如 10 → 13 blocks/s），升降速度不变。松开 W、按 S 或失焦后恢复基础速度。
+
+点击临时栏「第一人称」后，按提示点击建筑或可见地面选择落点；空白处继续选择，Esc 取消。进入后锁定鼠标转向，WASD 水平移动，Space 跳跃，双击 Space 切换飞行，↑/↓ 进入飞行并升降，飞行时 Space 也可上升。步行有方块形状碰撞；飞行可穿墙和向上穿楼板，下降接触建筑顶面或基准地面时落地退出。滚轮或触摸板缩放手势调整 FOV（20°–100°），双指张开放大、捏合缩小，Shift 精细调整；第一人称内 Ctrl+滚轮也调整 FOV，手势不会缩放整个页面。第一人称 FOV 按当前浏览器/站点全局记忆，退出再进入、刷新或换模型均沿用上次值。Esc 返回轨道视图并恢复进入前的轨道 FOV。刷新恢复相机与速度，不会自动锁定鼠标。浏览器不支持或拒绝锁定时保留轨道视图；请使用支持 Pointer Lock 的普通浏览器。
+
+记录存于当前浏览器的本地 IndexedDB，不会上传。应用不自动清理记录；空间不足或存储受限时保留旧记录并提示本次未缓存。删除历史会保留当前画面，已删除视图不会因后续操作自动重新建档；重新导入可再次保存。清理浏览器站点数据会清除记录，隐私模式或浏览器存储回收也可能影响保留；重要建筑仍应下载 `.schem`。历史是导入状态缓存，不包含面板搜索、切片位置或撤销记录。
 
 三维方块预览和材质面板使用内置的 Pixel Perfection Legacy 方块贴图，原模型保留 GLB 自带材质；切片采用代表色以便检查轮廓。以 GLB 的 Y 轴为上方，保持场景方向，粘贴原点为输出区域最小角。
 
@@ -38,7 +53,7 @@ npm run build
 npm run preview
 ```
 
-`npm run build` 自动执行核心测试、TypeScript 检查及生产构建，生成 `dist/`。`npm run typecheck` 和 `npm test` 可单独运行。
+`npm run build` 自动执行核心测试、Vue/TypeScript 检查及生产构建，生成 `dist/`；`npm run check` 是同一聚合流程。`npm run typecheck` 使用 `vue-tsc --noEmit`，也检查 Vue 模板；`npm test` 可单独运行。日常按协作约定默认不执行测试套件或生产构建，Web 改动做必要桌面视觉检查；部署前必须完整验证。
 
 ## Cloudflare Pages
 
@@ -46,7 +61,7 @@ npm run preview
 
 **连接 Git 仓库**：将本项目设为根目录；框架选择 None，构建命令 `npm run build`，输出目录 `dist`，Node 版本使用 24.12.0。
 
-没有服务端、Pages Functions、数据库、模型上传或第三方 CDN。`public/_headers` 随构建发布。部署前还应完成桌面视觉检查及目标 Axiom 中的实际导入核对。
+没有服务端、Pages Functions、远程数据库、模型上传或第三方 CDN；导入历史仅使用浏览器本地 IndexedDB。`public/_headers` 随构建发布。部署前还应完成桌面视觉检查及目标 Axiom 中的实际导入核对。
 
 ## 几何处理与边界
 
@@ -115,7 +130,7 @@ python scripts/subset-fonts.py "DingTalk-JinBuTi.woff2" "Minecrafter.Alt.ttf" --
 
 ## 界面设计参考
 
-`ref/` 保存从 `minecraft-dev` 复制的设计原型、实际主题 CSS、Vue 角花指令与字体规则，来源及本项目映射见 [ref/README.md](ref/README.md)。配色以实际主题 CSS 为准：黑色背景、麦金色强调、暖灰正文、直角细框与窗棂角花。运行实现位于 `src/style.css`、`src/lattice.ts` 和 `src/upload-frame.ts`，使用原生 DOM，不引入 Vue 或其他生产依赖。
+`ref/` 保存从 `minecraft-dev` 复制的设计原型、实际主题 CSS、Vue 角花指令与字体规则，来源及本项目映射见 [ref/README.md](ref/README.md)。配色以实际主题 CSS 为准：黑色背景、麦金色强调、暖灰正文、直角细框与窗棂角花。运行实现位于 `src/app/style.css` 与 Vue 的 `LatticeCorners`、`UploadArea` 组件；参考快照不作为运行代码。
 
 ## 格式与版本依据
 
@@ -126,4 +141,4 @@ python scripts/subset-fonts.py "DingTalk-JinBuTi.woff2" "Minecrafter.Alt.ttf" --
 - [Minecraft 原版楼梯模型](https://raw.githubusercontent.com/misode/mcmeta/assets/assets/minecraft/models/block/stairs.json)及[朝向与拐角映射](https://raw.githubusercontent.com/misode/mcmeta/assets/assets/minecraft/blockstates/oak_stairs.json)：楼梯预览与导出共用实际的几何掩码。
 - [Axiom 官方导入说明](https://axiomdocs.moulberry.com/editor/mainmenubar/file.html)。
 
-唯一生产依赖为 Three.js。Vite、TypeScript 和类型声明仅用于开发与构建；第三方许可随静态产物提供。
+生产依赖为 Vue 和 Three.js。Vite、Vue 官方 Vite 插件、`vue-tsc`、TypeScript 和类型声明仅用于开发与构建；第三方许可随静态产物提供。

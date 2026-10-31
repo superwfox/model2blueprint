@@ -1,14 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import registry from '../scripts/data/minecraft-26.3-blocks.json' with { type: 'json' };
-import { FAMILIES, FULL_BLOCKS, SLABS, STAIRS, SHELVES, suggestFamily } from '../src/palette.ts';
-import { BLOCK_SHAPES } from '../src/block-shapes.ts';
-import { familyColors } from '../src/colors.ts';
-import { encodeSchem } from '../src/schem.ts';
-import { meshSurface } from '../src/surface.ts';
-import { fallingBlocks } from '../src/falling-data.ts';
+import { FAMILIES, FULL_BLOCKS, SLABS, STAIRS, SHELVES, suggestFamily } from '../src/core/palette.ts';
+import { BLOCK_SHAPES } from '../src/core/block-shapes.ts';
+import { familyColors } from '../src/core/colors.ts';
+import { encodeSchem } from '../src/core/schem.ts';
+import { meshSurface } from '../src/core/surface.ts';
+import { fallingBlocks } from '../src/core/falling-data.ts';
 import { readNbt, readVarInts } from './nbt-reader.ts';
-import type { MaterialColors, VoxelResult } from '../src/types.ts';
+import type { MaterialColors, VoxelResult } from '../src/core/types.ts';
 
 const states = registry as unknown as Record<string, [Record<string, string[]>, Record<string, string>]>;
 function grid(shapes: number[], materials = new Uint16Array(shapes.length)): VoxelResult {

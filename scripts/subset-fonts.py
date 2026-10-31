@@ -13,6 +13,7 @@ parser.add_argument('--ui', type=Path, help='Jiangxizhuokai source font for fixe
 args = parser.parse_args()
 text = ''.join(chr(i) for i in range(32, 256))
 text += ''.join(p.read_text('utf-8') for p in (root / 'src').rglob('*.ts'))
+text += ''.join(p.read_text('utf-8') for p in (root / 'src').rglob('*.vue'))
 text += ''.join(p.read_text('utf-8') for p in (root / 'src').rglob('*.css'))
 text += (root / 'index.html').read_text('utf-8')
 catalog = json.loads((root / 'src/data/block-catalog.json').read_text('utf-8'))

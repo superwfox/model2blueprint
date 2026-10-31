@@ -32,6 +32,15 @@ button, input, select { font: inherit; color: inherit; font-weight: 400; }
 button { cursor: pointer; }
 input, select, optgroup, [data-font=dynamic] { font-family: var(--font-content); }
 input::placeholder { font-family: var(--font-ui); color: var(--text-muted); }
+input[type=range] { appearance: none; -webkit-appearance: none; height: 24px; padding: 0; border: 0; border-radius: 0; background: transparent; cursor: pointer; }
+input[type=range]::-webkit-slider-runnable-track { height: 2px; border: 0; border-radius: 0; background: var(--line-warm); }
+input[type=range]::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 12px; height: 12px; margin-top: -5px; border: 1px solid var(--oak); border-radius: 0; background: var(--oak); box-shadow: none; }
+input[type=range]::-moz-range-track { height: 2px; border: 0; border-radius: 0; background: var(--line-warm); }
+input[type=range]::-moz-range-progress { height: 2px; border: 0; border-radius: 0; background: var(--line-warm); }
+input[type=range]::-moz-range-thumb { box-sizing: border-box; width: 12px; height: 12px; border: 1px solid var(--oak); border-radius: 0; background: var(--oak); box-shadow: none; }
+input[type=range]:hover:not(:disabled)::-webkit-slider-thumb { background: var(--oak-hover); border-color: var(--oak-hover); }
+input[type=range]:hover:not(:disabled)::-moz-range-thumb { background: var(--oak-hover); border-color: var(--oak-hover); }
+input[type=range]:disabled { cursor: not-allowed; }
 button:disabled, input:disabled, select:disabled { opacity: .34; cursor: not-allowed; }
 :where(button, input, select, a):focus-visible { outline: 2px solid var(--oak-hover); outline-offset: 4px; }
 [hidden] { display: none !important; }
@@ -59,7 +68,7 @@ svg { display: block; width: 22px; height: 22px; flex-shrink: 0; }
 [data-state=ready] .empty-note { display: none; }
 [data-state=ready] .view-note { display: inline; }
 
-/* Frames and controls share the same corner geometry as the reference. */
+/* Frames and controls share the original reference corner geometry. */
 .lattice-frame { position: relative; isolation: isolate; border: 1px solid var(--line); background: var(--surface-1); border-radius: 0; }
 .lattice-corner {
   position: absolute; top: -1px; left: -1px; width: 64px; height: 64px;
@@ -81,6 +90,7 @@ svg { display: block; width: 22px; height: 22px; flex-shrink: 0; }
 .lattice-button:is(.active, [aria-pressed=true]) { border-color: var(--oak); color: var(--oak); background: var(--surface-3); }
 .lattice-button:is(.download, .upload-action, .mode.active) { border-color: var(--oak); background: var(--oak); color: var(--surface-1); }
 .lattice-button:is(.download, .upload-action, .mode.active):hover:not(:disabled) { border-color: var(--oak-hover); background: var(--oak-hover); color: var(--surface-1); }
+.lattice-button.menu-open, .lattice-button.menu-open:hover:not(:disabled) { background: var(--surface-0); border-color: var(--oak); color: var(--oak); }
 
 #upload-frame {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
@@ -128,7 +138,7 @@ svg { display: block; width: 22px; height: 22px; flex-shrink: 0; }
 #horizontal-size[aria-invalid=true] { border-color: var(--cyan); }
 /* Preserve the compact preview layout while updating materials or exporting. */
 #workspace.has-preview .workspace-header { display: none; }
-#workspace.has-preview #toolbar { top: 16px; width: 960px; padding: 10px 14px; }
+#workspace.has-preview #toolbar { top: 16px; width: 1010px; padding: 10px 14px; }
 #workspace.has-preview #toolbar.expanded { width: 1180px; }
 #workspace.has-preview #toolbar-row { gap: 8px; min-height: 50px; }
 #workspace.has-preview :is(.tool, .mode) { min-height: 42px; padding: 8px 20px; gap: 10px; }
@@ -157,15 +167,43 @@ svg { display: block; width: 22px; height: 22px; flex-shrink: 0; }
 .material-row label { font: 400 13px/1.6 var(--font-content); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .material-row select { width: 100%; min-width: 0; min-height: 46px; border: 1px solid var(--line-warm); border-radius: 0; padding: 12px 30px 12px 14px; background: var(--surface-1); font-size: 13px; line-height: 1.5; }
 .material-row select:hover { border-color: var(--oak); }
+.history-note, .history-empty, .history-warning { margin: 14px 0; font-size: 12px; line-height: 1.8; color: var(--text-secondary); }
+.history-warning { color: #8db7c3; }
+.history-list { list-style: none; margin: 0; padding: 0 4px; display: grid; gap: 12px; max-height: min(360px, calc(100dvh - 370px)); overflow: auto; scrollbar-width: thin; scrollbar-color: var(--line-warm) transparent; }
+.history-row { display: flex; align-items: center; gap: 24px; padding: 18px 16px; border: 1px solid var(--line); background: var(--surface-2); }
+.history-row[data-current=true] { border-color: var(--line-warm); }
+.history-description { flex: 1; min-width: 0; }
+.history-title { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 14px; }
+.history-filename { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history-current { flex-shrink: 0; padding: 4px 8px; border: 1px solid var(--line-warm); color: var(--oak); font-size: 11px; line-height: 1.5; }
+.history-meta { font-size: 11px; line-height: 1.8; color: var(--text-secondary); }
+.history-actions { display: flex; flex-shrink: 0; gap: 12px; padding: 4px; }
+.history-action { min-height: 42px; padding: 10px 18px; font: 400 12px/1.5 var(--font-content); }
 #slice-panel { display: grid; grid-template-columns: 220px minmax(0, 1fr); column-gap: 36px; align-items: center; }
 #slice-canvas { grid-column: 1; grid-row: 1/4; display: block; width: 220px; height: auto; max-height: min(230px, calc(100dvh - 320px)); object-fit: contain; image-rendering: pixelated; border: 1px solid var(--line-warm); border-radius: 0; background: var(--surface-1); }
 .slice-heading { grid-column: 2; grid-row: 1; display: flex; justify-content: space-between; gap: 24px; font-size: 20px; }
 #slice-height { font: 400 14px/1.6 var(--font-content); font-variant-numeric: tabular-nums; color: var(--oak); }
-#slice-range { grid-column: 2; grid-row: 2; display: block; width: 100%; accent-color: var(--oak); margin: 12px 0; }
+#slice-range { grid-column: 2; grid-row: 2; display: block; width: 100%; margin: 12px 0; }
 #slice-info { grid-column: 2; grid-row: 3; font: 400 12px/1.7 var(--font-content); color: var(--text-secondary); min-height: 20px; }
 #status { position: absolute; left: 50%; bottom: 74px; transform: translateX(-50%); max-width: calc(100vw - 72px); color: var(--text-secondary); font: 400 13px/1.7 var(--font-content); text-align: center; pointer-events: none; z-index: 5; }
 #status:empty { display: none; }
 #status.error { width: max-content; color: #8db7c3; background: var(--surface-2); border: 1px solid var(--cyan); padding: 14px 22px; }
+.transient-bar { position: absolute; left: 50%; bottom: 62px; z-index: 6; width: max-content; max-width: calc(100vw - 72px); transform: translate(-50%, calc(100% + 80px)); transition: transform .28s ease; pointer-events: none; }
+.transient-bar.shown { transform: translate(-50%, 0); pointer-events: auto; }
+#navigation-bar { padding: 14px 20px; max-width: 100%; }
+.navigation-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 16px; }
+.navigation-button { min-height: 44px; padding: 11px 20px; white-space: nowrap; font-size: 13px; }
+.navigation-button svg { width: 18px; height: 18px; }
+.movement-speed-range { width: 130px; min-width: 100px; margin: 0; }
+.movement-speed-group { display: flex; flex-shrink: 0; align-items: center; gap: 10px; }
+.movement-speed-label { font-size: 12px; white-space: nowrap; color: var(--oak); }
+.navigation-speed { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--text-secondary); }
+.movement-speed-number { width: 82px; min-height: 44px; padding: 11px 12px; border: 1px solid var(--line-warm); background: var(--surface-1); border-radius: 0; font-size: 14px; }
+.movement-speed-number[aria-invalid=true] { border-color: var(--cyan); }
+.navigation-mode { padding: 7px 12px; border: 1px solid var(--line-warm); font-size: 12px; color: var(--oak); white-space: nowrap; }
+.navigation-hint { margin-top: 14px; font-size: 11px; line-height: 1.7; color: var(--text-secondary); text-align: center; }
+#workspace.navigation-open #status { bottom: var(--navigation-status-bottom, 198px); }
+#workspace.selecting-landing #status { background: var(--surface-1); border: 1px solid var(--line-warm); color: var(--wheat); padding: 12px 20px; }
 
 .lattice-corner rect { transform-box: fill-box; transform-origin: center; }
 .lattice-frame[aria-busy=true] > .lattice-corner rect {
