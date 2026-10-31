@@ -8,6 +8,7 @@ import { FallingAnimation } from './falling-view.ts';
 import { BlockTextures } from './texture-material.ts';
 import { KeyboardNavigation } from './keyboard-navigation.ts';
 import { FirstPersonNavigation } from './first-person.ts';
+import { OrbitPinchZoom } from './orbit-pinch.ts';
 import { WalkingCollision } from '../../core/walking.ts';
 import type { MovementMode, NavigationProfiles, NavigationState, SpeedAxis } from './navigation-types.ts';
 import type { FallingData, GridSize, ModelData, SurfaceData, Vec3, VoxelResult } from '../../core/types.ts';
@@ -20,6 +21,7 @@ export class Viewer {
   private controls: OrbitControls;
   private navigation: KeyboardNavigation;
   private firstPerson: FirstPersonNavigation;
+  private orbitPinch: OrbitPinchZoom;
   private collision = new WalkingCollision();
   private viewListeners = new Set<() => void>();
   private navigationListeners = new Set<(state: NavigationState) => void>();
@@ -66,6 +68,8 @@ export class Viewer {
     this.navigation = new KeyboardNavigation(this.camera, this.renderer.domElement, kind => this.firstPerson.action(kind));
     this.firstPerson = new FirstPersonNavigation(this.camera, this.controls, this.renderer.domElement, this.collision,
       this.navigationChanged, this.navigationMoved, message => this.notice(message, true));
+    this.orbitPinch = new OrbitPinchZoom(this.camera, this.controls, this.renderer.domElement,
+      () => this.navigationEnabled && !this.selecting && !this.firstPerson.active);
     this.controls.addEventListener('change', this.notifyView);
     this.renderer.domElement.addEventListener('click', this.selectLanding, true);
     window.addEventListener('keydown', this.cancelSelectionKey, true);
@@ -92,6 +96,7 @@ export class Viewer {
           if (this.steady) this.steady.visible = true;
         }
       }
+      this.orbitPinch.update(delta);
       if (!this.firstPerson.active) this.controls.update();
       const offset = this.navigation.update(delta);
       if (this.firstPerson.active && this.navigation.active) {
@@ -120,6 +125,7 @@ export class Viewer {
       near: this.camera.near, far: this.camera.far, maxDistance: this.controls.maxDistance };
   }
   restoreCamera(state: CameraState): void {
+    this.orbitPinch.reset();
     this.cancelSelection(); this.firstPerson.exit();
     this.navigation.reset();
     const damping = this.controls.enableDamping;
@@ -199,6 +205,7 @@ export class Viewer {
     this.navigation.setEnabled(this.navigationEnabled); this.navigationChanged(); this.notice('');
   }
   toggleFirstPerson(): void {
+    this.orbitPinch.reset();
     if (this.firstPerson.active) { this.firstPerson.exit(); return; }
     if (this.selecting) { this.cancelSelection(); return; }
     const damping = this.controls.enableDamping;
@@ -238,6 +245,7 @@ export class Viewer {
 
   startResultAnimation(): void { this.dropReady = true; }
   setNavigationEnabled(value: boolean): void {
+    if (!value) this.orbitPinch.reset();
     this.navigationEnabled = value; if (!value) this.cancelSelection();
     this.navigation.setEnabled(value && !this.selecting); this.firstPerson.setEnabled(value);
   }
@@ -248,6 +256,7 @@ export class Viewer {
 
   fit(): void {
     if (!this.size) return;
+    this.orbitPinch.reset();
     this.cancelSelection(); this.firstPerson.exit();
     this.navigation.reset();
     const { width, height, length } = this.size;
@@ -275,7 +284,7 @@ export class Viewer {
     this.renderer.domElement.removeEventListener('click', this.selectLanding, true);
     window.removeEventListener('keydown', this.cancelSelectionKey, true);
     this.controls.removeEventListener('change', this.notifyView);
-    cancelAnimationFrame(this.frame); this.observer.disconnect(); this.firstPerson.dispose(); this.navigation.dispose(); this.controls.dispose(); this.clearOriginal(); this.clearResult();
+    cancelAnimationFrame(this.frame); this.observer.disconnect(); this.orbitPinch.dispose(); this.firstPerson.dispose(); this.navigation.dispose(); this.controls.dispose(); this.clearOriginal(); this.clearResult();
     this.collision.setWorld(); this.viewListeners.clear(); this.navigationListeners.clear(); this.activityListeners.clear(); this.noticeListeners.clear();
     this.grid?.geometry.dispose(); (this.grid?.material as import('three').Material | undefined)?.dispose(); this.textures.dispose(); this.renderer.dispose();
     this.renderer.domElement.remove();

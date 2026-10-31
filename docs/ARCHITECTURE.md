@@ -53,6 +53,8 @@ Worker 协议位于 `adapters/worker/protocol.ts`：请求继续使用 `convert 
 
 ## 展开按钮与键盘导航
 
+`renderer/orbit-pinch.ts` 单独处理轨道视图的触摸板缩放：捕获 Ctrl+wheel/WebKit gesture 并避免重复处理，按对数距离累计目标，在 Viewer 现有循环中以帧时间平滑接近，不改变 FOV。普通滚轮仍交给 OrbitControls，避免其额外 10 倍捏合增量叠加页面 3 倍速度。减少动态效果时直接更新距离；控件开始其他操作、失焦、隐藏、选点、适应与恢复清空目标，卸载解除监听。
+
 `ToolButton` 的可选 `expanded` 属性与命名 `icon` 插槽统一展开反馈：展开为黑底、金色向上箭头，收起恢复传入的图标；未传 `expanded` 的普通按钮不改变语义和样式。工具栏负责具体面板状态，并提供对应的 `aria-controls`。
 
 `renderer/keyboard-navigation.ts` 由 Viewer 创建、逐帧更新和释放，复用渲染循环与预分配向量。WASD 按摄像机方位在水平 XZ 平面移动，不受俯仰角影响高度；从水平右向量推导前向量，俯视/仰视时也保持稳定。↑/↓ 单独沿世界 Y 轴升降。摄像机和 OrbitControls 的 target 同步位移，不改变鼠标轨道控制与缩放。
