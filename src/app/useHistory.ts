@@ -3,7 +3,8 @@ import { HistoryDatabase } from '../adapters/history/database.ts';
 import { validateSnapshot } from '../adapters/history/validate.ts';
 import { forgetView, lastView, rememberView } from '../adapters/history/view-cache.ts';
 import { DATA_VERSION } from '../core/schem.ts';
-import type { HistoryEntry, HistorySnapshot, HistoryView } from '../adapters/history/types.ts';
+import type { BuildingSnapshot, BuildingWrite, HistoryEntry, HistorySnapshot, HistoryView } from '../adapters/history/types.ts';
+import { validateBuilding } from '../adapters/history/building-validate.ts';
 
 type SaveData = Omit<HistorySnapshot, 'entry'> & { filename: string; view: HistoryView };
 
@@ -76,6 +77,20 @@ export function useHistory() {
     currentId.value = entry.id; detached = false; synchronized = true; geometryDirty = false; replace(entry);
     try { await database.activate(entry.id); warning.value = ''; } catch (reason) { failed(reason); }
   }
+  async function readBuilding(id: string): Promise<BuildingSnapshot> {
+    flushView(); const snapshot = await database.readBuilding(id); validateBuilding(snapshot);
+    const recent = lastView(id);
+    if (recent && recent.time >= snapshot.entry.viewUpdatedAt) snapshot.entry = { ...snapshot.entry, view: recent.view, viewUpdatedAt: recent.time };
+    return snapshot;
+  }
+  async function saveBuilding(write: BuildingWrite): Promise<void> {
+    if (disposed || detached) return;
+    try {
+      await database.writeBuilding(write); if (disposed) return;
+      currentId.value = write.entry.id; synchronized = true; replace(write.entry); warning.value = '';
+      rememberView({ id: write.entry.id, view: write.entry.view, time: write.entry.viewUpdatedAt });
+    } catch (reason) { synchronized = false; failed(reason); throw reason; }
+  }
   async function remove(id: string): Promise<void> {
     flushView();
     try {
@@ -85,5 +100,6 @@ export function useHistory() {
     } catch (reason) { failed(reason); }
   }
   function dispose(): void { flushView(); disposed = true; void viewWrite.finally(() => database.close()); }
-  return { entries, currentId, warning, initialize, beginImport, save, read, activate, remove, updateView, flushView, dispose };
+  return { entries, currentId, warning, initialize, beginImport, save, read, activate, remove, updateView, flushView, dispose,
+    readBuilding, saveBuilding, isDetached: () => detached };
 }

@@ -6,9 +6,17 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { disposeModel } from '../glb.ts';
 import { FallingAnimation } from './falling-view.ts';
 import { BlockTextures } from './texture-material.ts';
+import { BuildingWorld } from '../../core/building.ts';
+import type { BrushSettings, WallNode } from '../../core/brush-types.ts';
 import { KeyboardNavigation } from './keyboard-navigation.ts';
 import { FirstPersonNavigation } from './first-person.ts';
 import { OrbitPinchZoom } from './orbit-pinch.ts';
+import { BuildingView } from './building-view.ts';
+import type { EditorIntent } from './building-view.ts';
+import type { ChunkSurface } from '../editor/protocol.ts';
+import { VoxelWorld, dimensions } from '../../core/block-world.ts';
+import type { BlockWorld } from '../../core/block-world.ts';
+import { pickBlock } from '../../core/building-pick.ts';
 import { WalkingCollision } from '../../core/walking.ts';
 import type { MovementMode, NavigationProfiles, NavigationState, SpeedAxis } from './navigation-types.ts';
 import type { FallingData, GridSize, ModelData, SurfaceData, Vec3, VoxelResult } from '../../core/types.ts';
@@ -22,6 +30,10 @@ export class Viewer {
   private navigation: KeyboardNavigation;
   private firstPerson: FirstPersonNavigation;
   private orbitPinch: OrbitPinchZoom;
+  private buildingView: BuildingView;
+  private blockWorld?: BlockWorld;
+  private isEditing = false;
+  private editorListeners = new Set<(intent: EditorIntent) => void>();
   private collision = new WalkingCollision();
   private viewListeners = new Set<() => void>();
   private navigationListeners = new Set<(state: NavigationState) => void>();
@@ -35,6 +47,7 @@ export class Viewer {
   private original = new Group();
   private converted = new Group();
   private grid: GridHelper | null = null;
+  private gridSignature = '';
   private size: GridSize | null = null;
   private mode: 'original' | 'result' = 'original';
   private observer: ResizeObserver;
@@ -70,6 +83,10 @@ export class Viewer {
       this.navigationChanged, this.navigationMoved, message => this.notice(message, true));
     this.orbitPinch = new OrbitPinchZoom(this.camera, this.controls, this.renderer.domElement,
       () => this.navigationEnabled && !this.selecting && !this.firstPerson.active);
+    this.buildingView = new BuildingView(this.camera, this.renderer.domElement, this.scene, this.textures.material(),
+      () => this.navigationEnabled && !this.selecting && !this.firstPerson.active,
+      intent => { for (const listener of this.editorListeners) listener(intent); }, (message, failed = false) => this.notice(message, failed),
+      this.hitBuilding, () => this.steady ? this.steady.geometry.getAttribute('position').count / 3 : 0, this.controls);
     this.controls.addEventListener('change', this.notifyView);
     this.renderer.domElement.addEventListener('click', this.selectLanding, true);
     window.addEventListener('keydown', this.cancelSelectionKey, true);
@@ -105,12 +122,13 @@ export class Viewer {
       } else if (!this.firstPerson.active && offset.lengthSq()) {
         this.camera.position.add(offset); this.controls.target.add(offset); this.navigationMoved();
       }
-      this.renderer.render(this.scene, this.camera);
+      this.buildingView.update(); this.renderer.render(this.scene, this.camera);
     };
     tick();
   }
 
   setModel(model: ModelData, size: GridSize, scene?: import('three').Object3D): void {
+    this.blockWorld = undefined; this.isEditing = false; this.buildingView.setWorld(undefined, false); this.updateCanvasLabel();
     this.cancelSelection(); this.firstPerson.exit(); this.collision.setWorld();
     this.clearOriginal(); this.clearResult();
     if (scene) this.original.add(scene);
@@ -119,6 +137,7 @@ export class Viewer {
   }
 
   setOriginalPreview(scene: import('three').Object3D): void { this.clearOriginal(); this.original.add(scene); }
+  dropOriginal(): void { this.clearOriginal(); }
 
   getCameraState(): CameraState {
     return { position: this.camera.position.toArray(), target: this.controls.target.toArray(),
@@ -146,9 +165,7 @@ export class Viewer {
   private navigationChanged = (): void => {
     this.navigation.setFirstPerson(this.firstPerson.active);
     this.navigation.setFlying(this.firstPerson.active && this.firstPerson.flying);
-    this.renderer.domElement.setAttribute('aria-label', this.firstPerson.active
-      ? '第一人称建筑预览，WASD 水平移动，Space 跳跃，双击 Space 切换飞行，上下方向键飞行升降，滚轮调整视野，Shift 精细调整，Esc 返回轨道视图'
-      : '建筑三维预览，点击后用 WASD 移动、上下方向键升降；拖动旋转、滚轮缩放，Shift 精细缩放');
+    this.updateCanvasLabel();
     if (this.firstPerson.active) this.notice('');
     if (!this.disposed) for (const listener of this.navigationListeners) listener(this.getNavigationState());
   };
@@ -171,19 +188,84 @@ export class Viewer {
     if (!values.every(value => Number.isFinite(value) && value > 0)) return;
     this.navigation.setProfiles(profiles); this.navigationChanged(); this.notifyView();
   }
-  setVoxels(result: VoxelResult): void { this.collision.setWorld(result); }
+  setVoxels(result: VoxelResult): void { this.setBlockWorld(new VoxelWorld(result), false); }
+  private updateCanvasLabel(): void {
+    this.renderer.domElement.setAttribute('aria-label', this.firstPerson.active
+      ? '第一人称建筑预览，WASD 水平移动，Space 跳跃，双击 Space 切换飞行，上下方向键飞行升降，滚轮调整视野，Shift 精细调整，Esc 返回轨道视图'
+      : this.isEditing ? '建筑编辑预览，使用所选笔刷单击或选点，单块和平滑可长按连续操作，按住空格拖动旋转，WASD 水平移动，上下方向键升降，Ctrl 或 Cmd 加 Z 撤销，Esc 结束选点或返回预览'
+        : '建筑三维预览，点击后用 WASD 移动、上下方向键升降；拖动旋转、滚轮缩放，Shift 精细缩放');
+  }
+  onEditor(listener: (intent: EditorIntent) => void): () => void { this.editorListeners.add(listener); return () => this.editorListeners.delete(listener); }
+  setBlockWorld(world: BlockWorld, editing: boolean): void {
+    if (editing && this.falling) {
+      this.converted.remove(this.falling.mesh); this.falling.dispose(); this.falling = undefined;
+      if (this.steady) this.steady.visible = true;
+    }
+    this.blockWorld = world; this.isEditing = editing; this.collision.setWorld(world); this.buildingView.setWorld(world, editing); this.updateCanvasLabel();
+    this.buildingView.setBase(world instanceof BuildingWorld ? world.document.base : undefined, this.steady?.material as MeshStandardMaterial | undefined);
+  }
+  setBrushSettings(value: BrushSettings): void { this.buildingView.setSettings(value); }
+  setWallNodes(nodes: readonly WallNode[]): void { this.buildingView.setWallNodes(nodes); }
+  setEditorBlocked(value: boolean): void { this.buildingView.setBlocked(value); }
+  finishDrawing(): void { this.buildingView.finishDrawing(); }
+  acceptStroke(id: string, positions: Vec3[]): void { this.buildingView.acceptStroke(id, positions); }
+  highlightWall(node?: WallNode): void { this.buildingView.highlightWall(node); }
+  repickWall(node: WallNode): void { this.buildingView.repickWall(node); }
+  focusWall(node: WallNode): void {
+    if (!node.points.length) return; this.orbitPinch.reset(); this.navigation.reset();
+    const box = new Box3(); for (const point of node.points) { box.expandByPoint(new Vector3(...point.position)); if (point.control) box.expandByPoint(new Vector3(...point.control)); }
+    const preset = this.blockWorld instanceof BuildingWorld ? this.blockWorld.document.presets.find(value => value.id === node.preset) : undefined;
+    const structures = preset?.structures.filter(value => value.enabled) ?? [];
+    box.max.y += Math.max(1, ...structures.map(value => value.pattern.height)); box.expandByScalar(Math.max(1, ...structures.map(value => value.thickness)));
+    const center = box.getCenter(new Vector3()), distance = Math.max(5, box.getSize(new Vector3()).length() / (2 * Math.sin(this.camera.fov * Math.PI / 360))) * 1.2;
+    this.camera.position.copy(center).add(new Vector3(1, 0.7, 1).normalize().multiplyScalar(distance)); this.controls.target.copy(center);
+    this.camera.near = Math.max(0.01, distance / 10000); this.camera.far = Math.max(this.camera.far, distance * 30); this.controls.maxDistance = Math.max(this.controls.maxDistance, distance * 8);
+    this.camera.updateProjectionMatrix(); this.controls.update();
+  }
+  setEditing(value: boolean): void { this.isEditing = value; this.buildingView.setEditing(value); this.updateCanvasLabel(); }
+  markBuildingDirty(keys: string[], revision: number): void { this.buildingView.markDirty(keys, revision); }
+  applyBuildingMeshes(chunks: ChunkSurface[]): void { this.buildingView.apply(chunks); }
+  showBuilding(world: BlockWorld, surface?: SurfaceData): void {
+    this.cancelSelection(); this.firstPerson.exit(); this.orbitPinch.reset(); this.clearOriginal(); this.clearResult();
+    const dims = dimensions(world.bounds); this.size = { width: Math.max(1, dims[0]), height: Math.max(1, dims[1]), length: Math.max(1, dims[2]), scale: 1 };
+    if (surface) this.setResult(surface);
+    this.setBlockWorld(world, true); this.setMode('result'); this.updateBuildingGrid(); this.fit();
+  }
+  updateBuildingGrid(): void {
+    if (!this.blockWorld) return;
+    const dims = dimensions(this.blockWorld.bounds);
+    this.size = { width: Math.max(1, dims[0]), height: Math.max(1, dims[1]), length: Math.max(1, dims[2]), scale: 1 };
+    this.updateGroundGrid(this.blockWorld.bounds.min[0], this.blockWorld.bounds.min[2], dims[0], dims[2]);
+  }
+  private updateGroundGrid(x: number, z: number, width: number, length: number): void {
+    const span = Math.ceil(Math.max(32, width, length) * 1.25 / 16) * 16;
+    const centerX = Math.round((x + width / 2) / 8) * 8, centerZ = Math.round((z + length / 2) / 8) * 8;
+    const signature = `${span}:${centerX}:${centerZ}`;
+    if (this.grid && this.gridSignature === signature) return;
+    this.gridSignature = signature;
+    if (this.grid) { this.scene.remove(this.grid); this.grid.geometry.dispose(); (this.grid.material as import('three').Material).dispose(); }
+    this.grid = new GridHelper(span, span, '#655f51', '#262626');
+    this.grid.position.set(centerX, -0.002, centerZ); this.scene.add(this.grid);
+  }
+  private hitBuilding = (event: PointerEvent): boolean => {
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    this.raycaster.setFromCamera(new Vector2((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1), this.camera);
+    if (this.mode === 'result' && this.blockWorld) return Boolean(pickBlock(this.blockWorld, this.raycaster.ray.origin.toArray(), this.raycaster.ray.direction.toArray(), this.camera.far));
+    this.original.updateWorldMatrix(true, true); return Boolean(this.raycaster.intersectObject(this.original, true)[0]);
+  };
   private pickSurface(event: MouseEvent): Vec3 | undefined {
     const rect = this.renderer.domElement.getBoundingClientRect();
     const pointer = new Vector2((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1);
     this.raycaster.setFromCamera(pointer, this.camera); this.raycaster.far = this.camera.far;
     const object = this.mode === 'original' ? this.original : this.steady;
     object?.updateWorldMatrix(true, true);
-    const hit = object ? this.raycaster.intersectObject(object, true)[0] : undefined;
+    const voxelHit = this.mode === 'result' && this.blockWorld ? pickBlock(this.blockWorld, this.raycaster.ray.origin.toArray(), this.raycaster.ray.direction.toArray(), this.camera.far) : undefined;
+    const hit = voxelHit ? { distance: voxelHit.distance, point: new Vector3(...voxelHit.point) } : object ? this.raycaster.intersectObject(object, true)[0] : undefined;
     let ground = this.raycaster.ray.intersectPlane(this.ground, new Vector3());
     // Only the visible grid is a selectable ground surface; black empty space is not a hidden plane.
     if (ground && this.size) {
-      const halfSpan = Math.max(this.size.width, this.size.length) * 1.25 / 2;
-      if (Math.abs(ground.x - this.size.width / 2) > halfSpan || Math.abs(ground.z - this.size.length / 2) > halfSpan) ground = null;
+      const halfSpan = Math.max(32, this.size.width, this.size.length) * 1.25 / 2;
+      if (Math.abs(ground.x - (this.grid?.position.x ?? this.size.width / 2)) > halfSpan || Math.abs(ground.z - (this.grid?.position.z ?? this.size.length / 2)) > halfSpan) ground = null;
     }
     const distance = ground?.distanceTo(this.raycaster.ray.origin) ?? Infinity;
     if (hit && hit.distance <= distance) return hit.point.toArray();
@@ -216,13 +298,11 @@ export class Viewer {
   }
 
   resizeModel(model: ModelData, size: GridSize): void {
+    this.gridSignature = '';
     this.size = size;
     this.original.scale.setScalar(size.scale);
     this.original.position.set(...model.min.map(v => -v * size.scale) as [number, number, number]);
-    if (this.grid) { this.scene.remove(this.grid); this.grid.geometry.dispose(); (this.grid.material as import('three').Material).dispose(); }
-    const span = Math.max(size.width, size.length);
-    this.grid = new GridHelper(span * 1.25, 20, '#655f51', '#262626');
-    this.grid.position.set(size.width / 2, -0.04, size.length / 2); this.scene.add(this.grid);
+    this.updateGroundGrid(0, 0, size.width, size.length);
     this.fit();
   }
 
@@ -252,6 +332,7 @@ export class Viewer {
 
   setMode(mode: 'original' | 'result'): void {
     this.mode = mode; this.original.visible = mode === 'original'; this.converted.visible = mode === 'result';
+    this.buildingView.setVisible(mode === 'result');
   }
 
   fit(): void {
@@ -259,8 +340,10 @@ export class Viewer {
     this.orbitPinch.reset();
     this.cancelSelection(); this.firstPerson.exit();
     this.navigation.reset();
-    const { width, height, length } = this.size;
-    const center = new Vector3(width / 2, height / 2, length / 2);
+    const dims = this.blockWorld ? dimensions(this.blockWorld.bounds) : [this.size.width, this.size.height, this.size.length];
+    const [width, height, length] = dims.every(value => value === 0) ? [32, 1, 32] : dims.map(value => Math.max(1, value));
+    const center = this.blockWorld && dims.some(Boolean) ? new Vector3(...this.blockWorld.bounds.min).add(new Vector3(...dims).multiplyScalar(0.5))
+      : this.blockWorld ? new Vector3() : new Vector3(width / 2, height / 2, length / 2);
     const radius = new Box3(new Vector3(), new Vector3(width, height, length)).getSize(new Vector3()).length() / 2;
     const fov = Math.min(this.camera.fov * Math.PI / 180, 2 * Math.atan(Math.tan(this.camera.fov * Math.PI / 360) * this.camera.aspect));
     const distance = radius / Math.sin(fov / 2) * 1.08;
@@ -284,8 +367,8 @@ export class Viewer {
     this.renderer.domElement.removeEventListener('click', this.selectLanding, true);
     window.removeEventListener('keydown', this.cancelSelectionKey, true);
     this.controls.removeEventListener('change', this.notifyView);
-    cancelAnimationFrame(this.frame); this.observer.disconnect(); this.orbitPinch.dispose(); this.firstPerson.dispose(); this.navigation.dispose(); this.controls.dispose(); this.clearOriginal(); this.clearResult();
-    this.collision.setWorld(); this.viewListeners.clear(); this.navigationListeners.clear(); this.activityListeners.clear(); this.noticeListeners.clear();
+    cancelAnimationFrame(this.frame); this.observer.disconnect(); this.buildingView.dispose(); this.orbitPinch.dispose(); this.firstPerson.dispose(); this.navigation.dispose(); this.controls.dispose(); this.clearOriginal(); this.clearResult();
+    this.collision.setWorld(); this.viewListeners.clear(); this.navigationListeners.clear(); this.activityListeners.clear(); this.noticeListeners.clear(); this.editorListeners.clear();
     this.grid?.geometry.dispose(); (this.grid?.material as import('three').Material | undefined)?.dispose(); this.textures.dispose(); this.renderer.dispose();
     this.renderer.domElement.remove();
   }

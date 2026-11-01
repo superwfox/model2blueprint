@@ -1,5 +1,7 @@
 import { SHAPE_BOXES } from './block-shapes.ts';
 import type { Vec3, VoxelResult } from './types.ts';
+import { VoxelWorld } from './block-world.ts';
+import type { BlockWorld } from './block-world.ts';
 
 export const BODY_HEIGHT = 1.8, EYE_HEIGHT = 1.62;
 const RADIUS = 0.3, EPSILON = 1e-5;
@@ -9,17 +11,17 @@ type Visit = (x0: number, y0: number, z0: number, x1: number, y1: number, z1: nu
 
 /** Local, swept player bounds against canonical shapes; no render geometry or world copy. */
 export class WalkingCollision {
-  private world?: VoxelResult;
-  setWorld(world?: VoxelResult): void { this.world = world; }
+  private world?: BlockWorld;
+  setWorld(world?: VoxelResult | BlockWorld): void { this.world = world && ('shapeAt' in world ? world : new VoxelWorld(world)); }
 
   private eachBox(min: Vec3, max: Vec3, visit: Visit): void {
     const world = this.world; if (!world) return;
-    const { width, height, length } = world.size;
-    const x0 = Math.max(0, Math.floor(min[0] - EPSILON)), x1 = Math.min(width - 1, Math.floor(max[0] + EPSILON));
-    const y0 = Math.max(0, Math.floor(min[1] - EPSILON)), y1 = Math.min(height - 1, Math.floor(max[1] + EPSILON));
-    const z0 = Math.max(0, Math.floor(min[2] - EPSILON)), z1 = Math.min(length - 1, Math.floor(max[2] + EPSILON));
+    const bounds = world.bounds;
+    const x0 = Math.max(bounds.min[0], Math.floor(min[0] - EPSILON)), x1 = Math.min(bounds.max[0] - 1, Math.floor(max[0] + EPSILON));
+    const y0 = Math.max(bounds.min[1], Math.floor(min[1] - EPSILON)), y1 = Math.min(bounds.max[1] - 1, Math.floor(max[1] + EPSILON));
+    const z0 = Math.max(bounds.min[2], Math.floor(min[2] - EPSILON)), z1 = Math.min(bounds.max[2] - 1, Math.floor(max[2] + EPSILON));
     for (let y = y0; y <= y1; y++) for (let z = z0; z <= z1; z++) for (let x = x0; x <= x1; x++) {
-      const boxes = BOXES[world.shapes[x + z * width + y * width * length]];
+      const boxes = BOXES[world.shapeAt(x, y, z)];
       for (const box of boxes) visit(x + box[0], y + box[1], z + box[2], x + box[3], y + box[4], z + box[5]);
     }
   }
@@ -50,7 +52,7 @@ export class WalkingCollision {
   /** Entering on a wall/under an overhang must not leave the walking body inside blocks. */
   makeRoom(feet: Vec3): void {
     feet[1] = Math.max(0, feet[1]);
-    for (let attempt = 0; attempt < (this.world?.size.height ?? 0) + 2; attempt++) {
+    for (let attempt = 0; attempt < (this.world?.bounds.max[1] ?? 0) + 2; attempt++) {
       const [min, max] = this.bounds(feet); let top = feet[1];
       this.eachBox(min, max, (x0, y0, z0, x1, y1, z1) => {
         if (max[0] > x0 + EPSILON && min[0] < x1 - EPSILON && max[2] > z0 + EPSILON && min[2] < z1 - EPSILON

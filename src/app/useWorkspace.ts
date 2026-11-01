@@ -12,6 +12,8 @@ import { familyTextures } from '../core/texture-data.ts';
 import type { BlockFamily, BlockKind, BlockOption, ManualVariants, ModelData, SurfaceData, VoxelResult } from '../core/types.ts';
 import type { HistoryView } from '../adapters/history/types.ts';
 import { useHistory } from './useHistory.ts';
+import { useBuilding } from './useBuilding.ts';
+import type { EditorIntent } from '../adapters/renderer/building-view.ts';
 import { DEFAULT_SPEEDS, createNavigationProfiles } from '../adapters/renderer/navigation-types.ts';
 import type { MovementMode, NavigationState, SpeedAxis } from '../adapters/renderer/navigation-types.ts';
 import { validCamera } from '../adapters/history/validate.ts';
@@ -34,18 +36,33 @@ export function useWorkspace(afterReveal: () => Promise<void>) {
   let sourceBlob: Blob | undefined, surface: SurfaceData | undefined, committedSize = '256';
   let stopViewListener: (() => void) | undefined;
   let stopNavigationListener: (() => void) | undefined;
+  let stopEditorListener: (() => void) | undefined;
   let disposed = false;
+  let switching = false;
+  const building = useBuilding({ history, viewer: () => viewer, view: viewState, notice: status, fork: () => {
+    model.value = undefined; result.value = undefined; sourceBlob = undefined; originalScene = undefined; surface = undefined;
+    filename.value = building.title.value; previewMode.value = 'result'; viewer?.dropOriginal();
+  } });
+  const hasWorld = computed(() => Boolean(model.value || building.world.value));
+  const hasPreview = computed(() => Boolean(result.value || building.world.value));
+  const canDownload = computed(() => !busy.value && validSize.value && (building.world.value ? building.count.value > 0 : Boolean(result.value)));
 
   function status(text: string, failed = false): void { message.value = text; error.value = failed; }
   function setBusy(value: boolean): void {
     busy.value = value; canCancel.value = false;
-    phase.value = value ? 'loading' : result.value ? 'ready' : 'empty';
+    phase.value = value ? 'loading' : result.value || building.world.value ? 'ready' : 'empty';
     progress.value = 0;
   }
   function fail(reason: unknown): void {
     if (disposed) return;
     if (reason instanceof DOMException && reason.name === 'AbortError') { status('已取消'); return; }
     status(reason instanceof Error ? reason.message : '转换失败，请重新选择模型。', true);
+  }
+  async function prepareSwitch(): Promise<boolean> {
+    if (disposed || busy.value || switching) return false;
+    switching = true;
+    if (await building.flush() && !disposed) return true;
+    switching = false; return false;
   }
   function viewState(): HistoryView {
     const { horizontal, vertical, profiles } = navigationState.value;
@@ -54,16 +71,20 @@ export function useWorkspace(afterReveal: () => Promise<void>) {
       navigation: { horizontal, vertical }, navigationProfiles: profiles };
   }
   function rememberView(): void {
-    if (disposed || busy.value || !result.value) return;
+    if (disposed || busy.value || (!result.value && !building.world.value)) return;
     const state = viewState(); if (viewer && !state.camera) return;
     history.updateView(state);
   }
-  function flushView(): void { rememberView(); history.flushView(); }
+  function flushView(): void { rememberView(); history.flushView(); void building.flush(); }
   function setViewer(value: Viewer | undefined): void {
     const camera = viewer?.getCameraState(), mode = previewMode.value;
-    stopViewListener?.(); stopNavigationListener?.(); viewer = value;
+    stopViewListener?.(); stopNavigationListener?.(); stopEditorListener?.(); viewer = value;
     // A viewport hot replacement reuses live data before listening for new camera changes.
-    if (value && model.value && result.value && surface) {
+    if (value && building.world.value) {
+      originalScene = undefined;
+      building.attachViewer(true); value.setNavigationProfiles(navigationState.value.profiles);
+      if (camera && validCamera(camera)) value.restoreCamera(camera);
+    } else if (value && model.value && result.value && surface) {
       originalScene = undefined; value.setModel(model.value, result.value.size); value.setVoxels(result.value);
       value.setResult(surface); value.setNavigationProfiles(navigationState.value.profiles ?? createNavigationProfiles(navigationState.value)); previewMode.value = 'result';
       if (camera && validCamera(camera)) value.restoreCamera(camera);
@@ -72,9 +93,40 @@ export function useWorkspace(afterReveal: () => Promise<void>) {
     stopViewListener = value?.onViewChanged(rememberView);
     stopNavigationListener = value?.onNavigation(state => { navigationState.value = state; },
       () => { navigationPulse.value++; }, (text, failed) => status(text, failed));
+    stopEditorListener = value?.onEditor(editorIntent);
   }
   function setNavigationSpeed(mode: MovementMode, axis: SpeedAxis, value: number): void { if (!busy.value) viewer?.setNavigationSpeed(mode, axis, value); }
-  function toggleFirstPerson(): void { if (!busy.value && result.value) viewer?.toggleFirstPerson(); }
+  function toggleFirstPerson(): void {
+    if (busy.value || !hasPreview.value) return;
+    if (building.editing.value) exitEdit(); viewer?.toggleFirstPerson();
+  }
+  function exitEdit(): void {
+    building.exit();
+    if (!building.forked.value) { building.clear(); if (result.value) viewer?.setVoxels(result.value); }
+    status('');
+  }
+  function editorIntent(intent: EditorIntent): void {
+    if (disposed || busy.value || building.working.value && intent.type !== 'stroke') return;
+    if (intent.type === 'enter') {
+      if (building.world.value) building.resume();
+      else if (result.value && surface) building.fromImport(result.value, families.value, surface, filename.value);
+      applyMode('result'); status('单击或长按放置，按住空格拖动旋转视角，Esc 结束选点或返回预览。');
+    } else if (intent.type === 'exit') exitEdit();
+    else if (intent.type === 'undo') building.undo();
+    else if (intent.type === 'redo') building.redo();
+    else if (intent.type === 'place') building.place(intent.position);
+    else if (intent.type === 'brush') building.applyBrush(intent.a, intent.b, intent.stroke);
+    else if (intent.type === 'stroke') building.paintStroke(intent.stroke, intent.rays, intent.end);
+    else if (intent.type === 'node') void building.saveNode(intent.node, true);
+  }
+  async function startBlank(): Promise<void> {
+    if (!await prepareSwitch()) return;
+    try {
+      if (!viewer) { status('三维预览不可用，无法从空白模板放置方块；仍可导入 GLB、切片和下载。', true); return; }
+      flushView(); building.clear(); building.blank(); validSize.value = true;
+      viewer.setNavigationProfiles(createNavigationProfiles()); phase.value = 'ready'; status('单击地面放置第一块方块。');
+    } finally { switching = false; }
+  }
   function applyMode(mode: PreviewMode): void { previewMode.value = mode; viewer?.setMode(mode); }
   async function setMode(mode: PreviewMode): Promise<void> {
     if (disposed || busy.value || !model.value || (mode === 'result' && !result.value)) return;
@@ -126,13 +178,14 @@ export function useWorkspace(afterReveal: () => Promise<void>) {
     if (!disposed) viewer?.startResultAnimation();
   }
   async function convertCurrent(): Promise<void> {
-    if (disposed || busy.value || !model.value) return;
+    if (disposed || busy.value || switching || !model.value) return;
     setBusy(true); status('');
+    building.clear();
     try { await executeConversion(); } catch (reason) { checkSize(); fail(reason); }
     finally { if (!disposed) setBusy(false); }
   }
   async function openFile(file: File): Promise<void> {
-    if (disposed || busy.value) return;
+    if (!await prepareSwitch()) return;
     setBusy(true); status('');
     let loadedScene: typeof originalScene;
     try {
@@ -140,6 +193,7 @@ export function useWorkspace(afterReveal: () => Promise<void>) {
       const loaded = await loadGlb(buffer); loadedScene = loaded.scene;
       if (disposed) return;
       const size = gridSize(loaded.model, Number(horizontalSize.value));
+      building.clear();
       history.beginImport(); sourceBlob = file; surface = undefined;
       viewer?.setNavigationProfiles(createNavigationProfiles());
       if (!viewer && originalScene) disposeModel(originalScene);
@@ -152,6 +206,7 @@ export function useWorkspace(afterReveal: () => Promise<void>) {
     } catch (reason) { checkSize(); fail(reason); }
     finally {
       if (loadedScene) disposeModel(loadedScene);
+      switching = false;
       if (!disposed) setBusy(false);
     }
   }
@@ -189,9 +244,13 @@ export function useWorkspace(afterReveal: () => Promise<void>) {
     } finally { if (!disposed) setBusy(false); }
   }
   async function downloadSchem(): Promise<void> {
-    if (disposed || busy.value || !result.value || !validSize.value) return;
+    if (disposed || !canDownload.value) return;
     setBusy(true); status('');
     try {
+      if (building.world.value) {
+        const bytes = await building.download(); if (!disposed) { downloads.save(bytes, building.title.value); status('文件已生成'); } return;
+      }
+      if (!result.value) return;
       const reply = await run({ type: 'export', result: result.value, families: families.value });
       if (!disposed && reply.type === 'exported') { downloads.save(reply.bytes, filename.value); status('文件已生成'); }
     } catch (reason) { fail(reason); }
@@ -200,9 +259,19 @@ export function useWorkspace(afterReveal: () => Promise<void>) {
   async function restoreRecord(id: string): Promise<void> {
     let loadedScene: typeof originalScene;
     try {
+      if (history.entries.value.find(entry => entry.id === id)?.kind === 'building') {
+        const saved = await history.readBuilding(id); if (disposed) return;
+        building.clear(); model.value = undefined; result.value = undefined; originalScene = undefined; sourceBlob = undefined; surface = undefined;
+        building.restore(saved); filename.value = saved.entry.filename; validSize.value = true; applyMode('result');
+        viewer?.setNavigationProfiles(saved.entry.view.navigationProfiles ?? createNavigationProfiles());
+        if (saved.entry.view.camera) viewer?.restoreCamera(saved.entry.view.camera);
+        await history.activate(saved.entry); if (disposed) return;
+        status(viewer ? '建筑已恢复，可继续编辑。' : '三维预览不可用，可使用切片或下载。', !viewer); phase.value = 'ready'; return;
+      }
       const saved = await history.read(id); if (disposed) return;
       if (saved.entry.view.mode === 'original' && viewer) loadedScene = await loadGlbScene(await saved.source.blob.arrayBuffer());
       if (disposed) return;
+      building.clear();
       if (!viewer && originalScene) disposeModel(originalScene);
       sourceBlob = saved.source.blob; model.value = saved.source.model; originalScene = loadedScene;
       filename.value = saved.entry.filename; horizontalSize.value = committedSize = saved.palette.horizontalSize;
@@ -219,10 +288,10 @@ export function useWorkspace(afterReveal: () => Promise<void>) {
     } finally { if (loadedScene) disposeModel(loadedScene); }
   }
   async function restoreHistory(id: string): Promise<void> {
-    if (disposed || busy.value) return;
+    if (!await prepareSwitch()) return;
     flushView(); setBusy(true); status('正在恢复本地记录');
     try { await restoreRecord(id); } catch (reason) { fail(reason); }
-    finally { if (!disposed) { setBusy(false); rememberView(); } }
+    finally { switching = false; if (!disposed) { setBusy(false); rememberView(); } }
   }
   async function initialize(): Promise<void> {
     setBusy(true);
@@ -233,18 +302,24 @@ export function useWorkspace(afterReveal: () => Promise<void>) {
     finally { if (!disposed) { setBusy(false); rememberView(); } }
   }
   async function deleteHistory(id: string): Promise<void> {
-    if (disposed || busy.value) return;
-    flushView(); setBusy(true);
-    try { await history.remove(id); } finally { if (!disposed) setBusy(false); }
+    if (disposed || busy.value || switching) return;
+    switching = true;
+    try {
+      // Deleting older records must remain possible when an autosave failed for lack of space.
+      await building.flush(); if (disposed) return;
+      rememberView(); history.flushView(); setBusy(true); await history.remove(id);
+      if (!disposed && !history.isDetached()) await building.flush();
+    } finally { switching = false; if (!disposed) setBusy(false); }
   }
   const downloadTitle = computed(() => {
+    if (building.world.value) return `下载 .schem · ${building.count.value.toLocaleString()} 格`;
     if (!result.value) return '下载 .schem';
     const { size, stats: s } = result.value, count = s.full + s.bottom + s.top + s.stairs + s.shelves;
     return `下载 .schem · ${size.width}×${size.length}×${size.height} · ${count.toLocaleString()} 格\n完整方块 ${s.full.toLocaleString()} · 下半砖 ${s.bottom.toLocaleString()} · 上半砖 ${s.top.toLocaleString()} · 楼梯 ${s.stairs.toLocaleString()} · 展示架 ${s.shelves.toLocaleString()}`;
   });
   function dispose(): void {
     if (disposed) return;
-    flushView(); disposed = true; stopViewListener?.(); stopNavigationListener?.(); history.dispose(); client.dispose(); downloads.dispose();
+    flushView(); disposed = true; stopViewListener?.(); stopNavigationListener?.(); stopEditorListener?.(); building.dispose(); history.dispose(); client.dispose(); downloads.dispose();
     if (!viewer && originalScene) disposeModel(originalScene);
     originalScene = undefined; viewer = undefined; sourceBlob = undefined; surface = undefined;
     model.value = undefined; result.value = undefined; families.value = []; manualVariants.value = [];
@@ -253,5 +328,6 @@ export function useWorkspace(afterReveal: () => Promise<void>) {
     phase, progress, message, error, downloadTitle, setViewer, setMode, openFile, convertCurrent, changeMaterial,
     historyEntries: history.entries, currentHistoryId: history.currentId, cacheWarning: history.warning,
     navigationState, navigationPulse, setNavigationSpeed, toggleFirstPerson,
+    building, hasWorld, hasPreview, canDownload, startBlank, exitEdit, resumeEdit: () => editorIntent({ type: 'enter' }),
     initialize, restoreHistory, deleteHistory, flushView, downloadSchem, cancel: () => client.cancel(), fit: () => viewer?.fit(), dispose };
 }

@@ -2,9 +2,10 @@
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import LatticeCorners from './LatticeCorners.vue';
 import ToolIcon from './ToolIcon.vue';
+import ToolButton from './ToolButton.vue';
 
 const props = defineProps<{ busy: boolean; working: boolean; hasResult: boolean; progress: number }>();
-const emit = defineEmits<{ choose: []; file: [file: File] }>();
+const emit = defineEmits<{ choose: []; file: [file: File]; blank: [] }>();
 const frame = ref<HTMLElement>(), dragover = ref(false);
 const duration = computed(() => !props.working || props.progress >= 0.92 ? '3s' : `${3 - props.progress * 1.5}s`);
 function onDragOver(event: DragEvent): void { event.preventDefault(); if (!props.busy) dragover.value = true; }
@@ -34,6 +35,7 @@ defineExpose({ settle });
       <span class="upload-action lattice-button">选择 GLB 文件 <span aria-hidden="true">↗</span><LatticeCorners /></span>
       <span class="upload-format">GLB 2.0 <span aria-hidden="true">/</span> SPONGE SCHEMATIC V2</span>
     </button>
+    <ToolButton id="blank-start" class="upload-blank" data-font="dynamic" :disabled="busy" @click="emit('blank')"><ToolIcon name="cube" /><span>从空白模板开始</span></ToolButton>
     <LatticeCorners kind="frame" />
   </div>
 </template>

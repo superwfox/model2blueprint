@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { onMounted, onBeforeUnmount } from 'vue';
 import ToolButton from './ToolButton.vue';
 import ToolIcon from './ToolIcon.vue';
 import LatticeCorners from './LatticeCorners.vue';
@@ -9,6 +9,7 @@ import HistoryPanel from './HistoryPanel.vue';
 import type { HistoryEntry } from '../../adapters/history/types.ts';
 import type { BlockFamily, BlockKind, BlockOption, ManualVariants, ModelData, VoxelResult } from '../../core/types.ts';
 import type { PreviewMode } from '../useWorkspace.ts';
+import { useToolbarPanels } from '../useToolbarPanels.ts';
 
 defineProps<{ model?: ModelData; result?: VoxelResult; families: BlockFamily[]; manual: ManualVariants[];
   filename: string; size: string; mode: PreviewMode; busy: boolean; validSize: boolean; canCancel: boolean; downloadTitle: string;
@@ -17,11 +18,7 @@ const emit = defineEmits<{ choose: []; 'update:size': [value: string]; convert: 
   material: [index: number, kind: BlockKind, choice: BlockOption]; fit: []; download: []; cancel: [];
   restore: [id: string]; remove: [id: string] }>();
 type Panel = 'material' | 'slice' | 'history';
-const panel = ref<Panel>('material'), expanded = ref(false);
-function closePanels(): void { expanded.value = false; }
-function togglePanel(name: Panel): void {
-  expanded.value = panel.value !== name || !expanded.value; panel.value = name;
-}
+const { panel, expanded, shown, expansion, toggle: togglePanel, close: closePanels, settled } = useToolbarPanels<Panel>('material');
 function updateSize(event: Event): void { emit('update:size', (event.target as HTMLInputElement).value); }
 function onKeyDown(event: KeyboardEvent): void { if (event.key === 'Escape') closePanels(); }
 onMounted(() => document.addEventListener('keydown', onKeyDown));
@@ -46,28 +43,28 @@ defineExpose({ closePanels });
       </div>
       <span class="divider"></span>
       <ToolButton id="material-toggle" class="tool tool-labelled" aria-label="材质映射" :title="expanded && panel === 'material' ? '收起材质映射' : '材质映射'"
-        :expanded="expanded && panel === 'material'" aria-controls="material-panel" :disabled="busy || !model" @click="togglePanel('material')">
+        :expanded="expanded && panel === 'material'" aria-controls="material-panel" :disabled="busy || !model" @click="togglePanel('material', $event)">
         <template #icon><ToolIcon name="palette" /></template><span>材质</span>
       </ToolButton>
       <ToolButton id="slice-toggle" class="tool tool-labelled" aria-label="水平切片" :title="expanded && panel === 'slice' ? '收起水平切片' : '水平切片'"
-        :expanded="expanded && panel === 'slice'" aria-controls="slice-panel" :disabled="busy || !result || !validSize" @click="togglePanel('slice')">
+        :expanded="expanded && panel === 'slice'" aria-controls="slice-panel" :disabled="busy || !result || !validSize" @click="togglePanel('slice', $event)">
         <template #icon><ToolIcon name="slice" /></template><span>切片</span>
       </ToolButton>
       <ToolButton id="fit" class="tool" aria-label="适应视图" title="适应视图" :disabled="busy || !model" @click="emit('fit')"><ToolIcon name="fit" /></ToolButton>
       <span class="divider"></span>
       <ToolButton id="download" class="tool tool-labelled download" aria-label="下载 Schem" :title="downloadTitle" :disabled="busy || !result || !validSize"
         @click="emit('download')"><ToolIcon name="download" /><span>下载 .schem</span></ToolButton>
-      <ToolButton id="history-toggle" class="tool" aria-label="导入历史" :title="expanded && panel === 'history' ? '收起导入历史' : '导入历史'"
-        :expanded="expanded && panel === 'history'" aria-controls="history-panel" :disabled="busy" @click="togglePanel('history')">
+      <ToolButton id="history-toggle" class="tool" aria-label="本地历史" :title="expanded && panel === 'history' ? '收起本地历史' : '本地历史'"
+        :expanded="expanded && panel === 'history'" aria-controls="history-panel" :disabled="busy" @click="togglePanel('history', $event)">
         <template #icon><ToolIcon name="clock" /></template>
       </ToolButton>
       <ToolButton id="cancel" class="tool" aria-label="取消转换" title="取消转换" :hidden="!canCancel" @click="emit('cancel')"><ToolIcon name="cancel" /></ToolButton>
     </div>
-    <div id="toolbar-expansion" :aria-hidden="!expanded" :inert="!expanded"><div class="expansion-inner">
-      <MaterialPanel :active="panel === 'material'" :busy="busy" :materials="model?.materials ?? []" :families="families" :manual="manual"
+    <div id="toolbar-expansion" ref="expansion" :aria-hidden="!expanded" :inert="!expanded" @transitionend="settled"><div class="expansion-inner">
+      <MaterialPanel :active="shown === 'material'" :busy="busy" :materials="model?.materials ?? []" :families="families" :manual="manual"
         @change="(index, kind, choice) => emit('material', index, kind, choice)" />
-      <SlicePanel :active="panel === 'slice'" :result="result" :families="families" />
-      <HistoryPanel :active="panel === 'history'" :entries="history" :current-id="currentHistoryId" :busy="busy" :warning="cacheWarning"
+      <SlicePanel :active="shown === 'slice'" :result="result" :families="families" />
+      <HistoryPanel :active="shown === 'history'" :entries="history" :current-id="currentHistoryId" :busy="busy" :warning="cacheWarning"
         @restore="id => emit('restore', id)" @remove="id => emit('remove', id)" />
     </div></div>
     <LatticeCorners kind="frame" />

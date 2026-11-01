@@ -1,6 +1,6 @@
-import type { HistoryBootstrap, HistoryEntry, HistorySnapshot, HistoryView, HistoryWrite } from './types.ts';
+import type { BuildingSnapshot, BuildingWrite, HistoryBootstrap, HistoryEntry, HistorySnapshot, HistoryView, HistoryWrite } from './types.ts';
 
-const STORES = ['entries', 'sources', 'voxels', 'surfaces', 'palettes', 'settings'] as const;
+const STORES = ['entries', 'sources', 'voxels', 'surfaces', 'palettes', 'settings', 'buildings', 'buildingChunks'] as const;
 type Store = typeof STORES[number];
 
 /** Separate large immutable sources, geometry and meshes from small view metadata. */
@@ -12,10 +12,12 @@ export class HistoryDatabase {
     if (this.opening) return this.opening;
     this.opening = new Promise<IDBDatabase>((resolve, reject) => {
       if (!globalThis.indexedDB) { reject(new Error('此浏览器无法使用本地历史记录。')); return; }
-      const request = indexedDB.open('model2blueprint-history', 1);
+      const request = indexedDB.open('model2blueprint-history', 2);
       let rejected = false;
       request.onupgradeneeded = () => {
         for (const name of STORES) if (!request.result.objectStoreNames.contains(name)) request.result.createObjectStore(name, { keyPath: 'id' });
+        const chunks = request.transaction!.objectStore('buildingChunks');
+        if (!chunks.indexNames.contains('buildingId')) chunks.createIndex('buildingId', 'buildingId');
       };
       request.onerror = () => reject(request.error);
       request.onblocked = () => { rejected = true; reject(new Error('请关闭其他旧版页面后重试本地历史记录。')); };
@@ -94,6 +96,41 @@ export class HistoryDatabase {
     });
   }
 
+  async readBuilding(id: string): Promise<BuildingSnapshot> {
+    return this.transaction(['entries', 'buildings', 'buildingChunks', 'voxels', 'surfaces'], 'readonly', (transaction, done) => {
+      const requests = ['entries', 'buildings', 'voxels', 'surfaces'].map(name => transaction.objectStore(name).get(id));
+      const chunks = transaction.objectStore('buildingChunks').index('buildingId').getAll(id);
+      chunks.onsuccess = () => {
+        const [entry, metadata, base, surface] = requests.map(request => request.result);
+        done({ entry, document: { ...metadata?.value, base: base?.value,
+          chunks: new Map(chunks.result.filter(value => !value.key.startsWith('generated|')).map(value => [value.key, value.value])),
+          generated: new Map(chunks.result.filter(value => value.key.startsWith('generated|')).map(value => [value.key.slice(10), value.value])) }, baseSurface: surface?.value });
+      };
+    });
+  }
+
+  async writeBuilding(write: BuildingWrite): Promise<void> {
+    return this.transaction(['entries', 'buildings', 'buildingChunks', 'voxels', 'surfaces', 'settings'], 'readwrite', (transaction, done) => {
+      const commit = () => {
+        const id = write.entry.id;
+        transaction.objectStore('entries').put(write.entry);
+        transaction.objectStore('buildings').put({ id, value: write.metadata });
+        for (const { key, chunk } of [...write.chunks, ...write.generated.map(value => ({ ...value, key: `generated|${value.key}` }))]) {
+          if (chunk) transaction.objectStore('buildingChunks').put({ id: `${id}:${key}`, buildingId: id, key, value: chunk });
+          else transaction.objectStore('buildingChunks').delete(`${id}:${key}`);
+        }
+        if (write.create && write.base) transaction.objectStore('voxels').put({ id, value: write.base });
+        if (write.create && write.baseSurface) transaction.objectStore('surfaces').put({ id, value: write.baseSurface });
+        transaction.objectStore('settings').put({ id: 'active', value: id }); done(undefined);
+      };
+      if (write.create) commit();
+      else {
+        const request = transaction.objectStore('entries').get(write.entry.id);
+        request.onsuccess = () => { if (request.result?.kind === 'building') commit(); else transaction.abort(); };
+      }
+    });
+  }
+
   async updateView(id: string, view: HistoryView, time: number): Promise<void> {
     return this.transaction(['entries'], 'readwrite', (transaction, done) => {
       const store = transaction.objectStore('entries'), request = store.get(id);
@@ -107,7 +144,9 @@ export class HistoryDatabase {
 
   async remove(id: string): Promise<void> {
     return this.transaction([...STORES], 'readwrite', (transaction, done) => {
-      for (const name of STORES) if (name !== 'settings') transaction.objectStore(name).delete(id);
+      for (const name of STORES) if (name !== 'settings' && name !== 'buildingChunks') transaction.objectStore(name).delete(id);
+      const chunks = transaction.objectStore('buildingChunks').index('buildingId').openKeyCursor(id);
+      chunks.onsuccess = () => { const cursor = chunks.result; if (cursor) { transaction.objectStore('buildingChunks').delete(cursor.primaryKey); cursor.continue(); } };
       const active = transaction.objectStore('settings').get('active');
       active.onsuccess = () => {
         if (active.result?.value === id) transaction.objectStore('settings').delete('active');

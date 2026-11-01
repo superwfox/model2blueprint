@@ -1,7 +1,10 @@
 <script setup lang="ts">
-defineProps<{ name: 'upload' | 'palette' | 'convert' | 'slice' | 'fit' | 'download' | 'cancel' | 'cube' | 'collapse' | 'clock' | 'horizontal' | 'vertical' | 'person' }>();
+defineProps<{ name: 'upload' | 'palette' | 'convert' | 'slice' | 'fit' | 'download' | 'cancel' | 'cube' | 'collapse' | 'clock' | 'horizontal' | 'vertical' | 'person' | 'undo' | 'redo' | 'brush' }>();
 const paths = {
+  brush: 'm14 4 6 6M4 20l2-6L17 3l4 4L10 18l-6 2Z',
   upload: 'M12 17V5m-4 4 4-4 4 4M5 16v4h14v-4',
+  undo: 'M9 5 3 11l6 6M3 11h10a7 7 0 0 1 7 7',
+  redo: 'm15 5 6 6-6 6m6-6H11a7 7 0 0 0-7 7',
   convert: 'M20 7v5h-5M4 17v-5h5M6 6a8 8 0 0 1 13 3M18 18a8 8 0 0 1-13-3',
   slice: 'm3 12 9-5 9 5-9 5-9-5Zm0 5 9 5 9-5M12 2v5',
   fit: 'M4 9V4h5m6 0h5v5m0 6v5h-5M9 20H4v-5',

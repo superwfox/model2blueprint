@@ -8,16 +8,16 @@ function date(time: number): string { return new Date(time).toLocaleString('zh-C
 </script>
 
 <template>
-  <section id="history-panel" class="panel" :hidden="!active" aria-label="导入历史" data-font="dynamic">
-    <div class="panel-heading"><span>导入历史</span><span class="panel-meta">{{ entries.length }} 条 · 仅保存在当前浏览器</span></div>
-    <p class="history-note">每次成功导入保存一条，后续转换与材质修改更新该条。刷新自动恢复上次视图。</p>
+  <section id="history-panel" class="panel" :hidden="!active" aria-label="本地历史" data-font="dynamic">
+    <div class="panel-heading"><span>本地历史</span><span class="panel-meta">{{ entries.length }} 条 · 仅保存在当前浏览器</span></div>
+    <p class="history-note">导入记录保留转换状态；编辑另存建筑记录及撤销历史。刷新自动恢复上次视图。</p>
     <p v-if="warning" class="history-warning" role="status">{{ warning }}</p>
-    <p v-if="!entries.length" class="history-empty">暂无历史记录，成功导入后将自动保存。</p>
-    <ol v-else class="history-list">
+    <p v-if="!entries.length" class="history-empty">暂无历史记录，导入或创建建筑后将自动保存。</p>
+    <ol v-else-if="active" class="history-list">
       <li v-for="entry in entries" :key="entry.id" class="history-row" :data-current="entry.id === currentId">
         <div class="history-description">
           <div class="history-title"><span class="history-filename" :title="entry.filename">{{ entry.filename }}</span><span v-if="entry.id === currentId" class="history-current">当前视图</span></div>
-          <div class="history-meta">{{ entry.dimensions.width }}×{{ entry.dimensions.length }}×{{ entry.dimensions.height }} · {{ entry.blocks.toLocaleString() }} 格 · 导入 {{ date(entry.createdAt) }}</div>
+          <div class="history-meta">{{ entry.kind === 'building' ? '建筑' : '导入' }} · {{ entry.dimensions.width }}×{{ entry.dimensions.length }}×{{ entry.dimensions.height }} · {{ entry.blocks.toLocaleString() }} 格 · 创建 {{ date(entry.createdAt) }}</div>
           <div class="history-meta">更新 {{ date(entry.updatedAt) }}</div>
         </div>
         <div class="history-actions">
